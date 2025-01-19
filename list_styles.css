@@ -1,0 +1,92 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.chorus {
+    margin-left: 20px;
+}
+
+.alpha-nav {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 10px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    z-index: 100;
+}
+
+.alpha-nav a {
+    color: #3498db;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    min-width: 35px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.alpha-nav a:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    .letter-group {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .alpha-nav {
+        padding: 8px;
+        gap: 5px;
+    }
+
+    .alpha-nav a {
+        padding: 4px 8px;
+        min-width: 30px;
+        font-size: 0.9rem;
+    }
+
+    .letter-group a {
+        font-size: 0.9rem;
+        padding: 10px 0;
+    }
+}
