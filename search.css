@@ -1,0 +1,199 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Навигация в заголовке */
+.header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.header-cell {
+    flex: 1;
+    text-align: center;
+    padding: 15px 5px;
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+}
+
+a.header-cell:hover {
+    color: black;
+}
+
+.title-cell {
+    background-color: lightblue;
+    color: black;
+}
+
+.title-cell h1 {
+    margin: 0;
+    color: black;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.header-cell img {
+    max-height: 24px;
+    width: auto;
+}
+
+/* Панель поиска */
+.search-nav {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    z-index: 100;
+}
+
+#searchBar {
+    flex: 1;
+    min-width: 250px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+#searchButton {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+#searchButton:hover {
+    background-color: #2980b9;
+}
+
+/* Результаты поиска */
+#results {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#results a {
+    display: block;
+    color: #3498db;
+    text-decoration: none;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1rem;
+}
+
+#results a:last-child {
+    border-bottom: none;
+}
+
+#results a:hover {
+    color: #2980b9;
+    background-color: #f8f9fa;
+}
+
+#results p {
+    padding: 15px 0;
+    text-align: center;
+    color: #666;
+}
+
+/* Сообщение об ошибке */
+.error-message {
+    padding: 15px;
+    background-color: #ffecec;
+    border-left: 4px solid #f44336;
+    margin-bottom: 15px;
+}
+
+.error-message p {
+    margin-bottom: 8px;
+    text-align: left;
+    color: #333;
+}
+
+.error-message strong {
+    color: #d32f2f;
+}
+
+/* Адаптивная верстка */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    .header-nav {
+        flex-wrap: wrap;
+    }
+    
+    .header-cell {
+        padding: 10px 5px;
+        min-height: 50px;
+        font-size: 0.85rem;
+    }
+    
+    .title-cell h1 {
+        font-size: 1.2rem;
+    }
+
+    .search-nav {
+        padding: 10px;
+        flex-direction: column;
+    }
+
+    #searchBar {
+        width: 100%;
+    }
+
+    #searchButton {
+        width: 100%;
+    }
+
+    #results {
+        padding: 10px;
+    }
+
+    #results a {
+        font-size: 0.9rem;
+        padding: 10px 0;
+    }
+}
