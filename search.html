@@ -38,12 +38,15 @@
             .then(data => {
                 songsData = data;
 
+                console.log("Загружены данные песен:", songsData);
+
                 idx = lunr(function () {
                     this.field('title');
                     this.field('text');
                     this.ref('id');
 
                     data.forEach(song => {
+                        console.log("Индексируется песня:", song);
                         this.add(song);
                     });
                 });
@@ -67,7 +70,8 @@
             });
 
         function performSearch() {
-            const query = document.getElementById('searchBar').value.trim(); // Retrieve the query and remove initial and trailing spaces
+            const query = document.getElementById('searchBar').value.trim();
+            console.log("Поисковый запрос:", query);
 
             if (!idx) {
                 console.error("The Lunr index is not initialized!");
@@ -81,12 +85,13 @@
                 return;
             }
 
-            if (!query) { // Checking for an empty query
+            if (!query) {
                 document.getElementById('results').innerHTML = '<p>Введите текст для поиска.</p>';
                 return;
             }
 
             const lunrResults = idx.search(query);
+            console.log("Результаты Lunr:", lunrResults);
 
             const resultContainer = document.getElementById('results');
             resultContainer.innerHTML = '';
@@ -99,11 +104,13 @@
             const filteredResults = lunrResults.filter(result => {
                 const song = songsData.find(song => song.id === result.ref);
                 if (song) {
-                    const fullText = song.title + " " + song.text; // Combine title and text to check
-                    return fullText.toLowerCase().includes(query.toLowerCase()); // Phrase match check (case-insensitive)
+                    const fullText = song.title + " " + song.text;
+                    return fullText.toLowerCase().includes(query.toLowerCase());
                 }
-                return false; // If the song is not found, do not include in the results
+                return false;
             });
+
+            console.log("Отфильтрованные результаты:", filteredResults);
 
             if (filteredResults.length === 0) {
                 resultContainer.innerHTML = '<p>Нет результатов, соответствующих фразе.</p>';
@@ -113,12 +120,12 @@
             filteredResults.forEach(result => {
                 const song = songsData.find(song => song.id === result.ref);
                 if (song) {
-                    const link = document.createElement('a');
-                    link.href = song.url;
-                    link.textContent = song.title;
-                    link.target = '_blank';
-                    resultContainer.appendChild(link);
-                    resultContainer.appendChild(document.createElement('br'));
+                    const songElement = document.createElement('div');
+                    songElement.innerHTML = `<p><strong>ID:</strong> ${song.id}<br>
+                                            <strong>Название:</strong> ${song.title}<br>
+                                            <strong>Текст:</strong> ${song.text || '(нет текста)'}<br>
+                                            <a href="${song.url}" target="_blank">Перейти к песне</a></p>`;
+                    resultContainer.appendChild(songElement);
                 } else {
                     console.error("Song with id " + result.ref + " not found in songsData!");
                     resultContainer.innerHTML += '<p style="color:red;">Ошибка: внутренняя ошибка поиска.</p>';
