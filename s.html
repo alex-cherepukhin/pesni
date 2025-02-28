@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="f.ico" type="image/x-icon">
+    <title>Canciones</title>
+    <link rel="stylesheet" href="i.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <a href="https://www.iglesialuzalasnaciones.es/" target="_blank">
+                <img src="i.png" alt="Luz a las naciones">
+            </a>
+            <h1>Canciones</h1>
+        </div>
+        <nav class="alpha-nav">
+            <a href="index.html">Índice</a>
+            <input type="text" id="searchBar" placeholder="Texto de búsqueda">
+            <button id="searchButton">&nbsp;Buscar&nbsp;</button>
+        </nav>
+        <div id="results"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/lunr/lunr.min.js"></script>
+    <script>
+        let idx;
+        let songsData;
+
+        fetch('songs.json')
+            .then(response => response.json())
+            .then(data => {
+                songsData = data;
+
+                idx = lunr(function () {
+                    this.field('title');
+                    this.field('text');
+                    this.ref('id');
+
+                    data.forEach(song => {
+                        this.add(song);
+                    });
+                });
+
+                document.getElementById('searchButton').addEventListener('click', performSearch);
+                document.getElementById('searchBar').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar songs.json:", error);
+            });
+
+        function performSearch() {
+            const query = document.getElementById('searchBar').value.trim(); // Retrieve the query and remove initial and trailing spaces
+
+            if (!idx) {
+                console.error("El índice Lunr no está inicializado!");
+                document.getElementById('results').innerHTML = '<p>No es posible la búsqueda, el índice no está cargado.</p>';
+                return;
+            }
+
+            if (!query) { // Checking for an empty query
+                document.getElementById('results').innerHTML = '<p>Introduzca el texto que desea buscar.</p>';
+                return;
+            }
+
+            const lunrResults = idx.search(query);
+
+            const resultContainer = document.getElementById('results');
+            resultContainer.innerHTML = '';
+
+            if (lunrResults.length === 0) {
+                resultContainer.innerHTML = '<p>No se encontraron resultados.</p>';
+                return;
+            }
+
+            const filteredResults = lunrResults.filter(result => {
+                const song = songsData.find(song => song.id === result.ref);
+                if (song) {
+                    const fullText = song.title + " " + song.text; // Combine title and text to check
+                    return fullText.toLowerCase().includes(query.toLowerCase()); // Phrase match check (case-insensitive)
+                }
+                return false; // If the song is not found, do not include in the results
+            });
+
+            if (filteredResults.length === 0) {
+                resultContainer.innerHTML = '<p>No hay resultados que coincidan con la frase.</p>';
+                return;
+            }
+
+            filteredResults.forEach(result => {
+                const song = songsData.find(song => song.id === result.ref);
+                if (song) {
+                    const link = document.createElement('a');
+                    link.href = song.url;
+                    link.textContent = song.title;
+                    link.target = '_blank';
+                    resultContainer.appendChild(link);
+                    resultContainer.appendChild(document.createElement('br'));
+                } else {
+                    console.error("Canción con id " + result.ref + " no encontrada en songsData!");
+                    resultContainer.innerHTML += '<p style="color:red;">Error: error de búsqueda interna.</p>';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
