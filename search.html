@@ -90,7 +90,7 @@
                 return;
             }
 
-            const lunrResults = idx.search(query);
+            const lunrResults = idx.search(query + "*"); // добавить "поиск по началу слова"
             console.log("Результаты Lunr:", lunrResults);
 
             const resultContainer = document.getElementById('results');
@@ -102,7 +102,7 @@
             }
 
             const filteredResults = lunrResults.filter(result => {
-                const song = songsData.find(song => song.id === result.ref);
+                const song = songsData.find(song => String(song.id) === result.ref);
                 if (song) {
                     const fullText = song.title + " " + song.text;
                     return fullText.toLowerCase().includes(query.toLowerCase());
