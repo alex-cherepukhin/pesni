@@ -47,7 +47,7 @@
                 `Песни на ${day} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
 
             // Загружаем данные о песнях из JSON файла
-            fetch('songs.json')
+            fetch('songs_all.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Ошибка загрузки данных');
@@ -57,7 +57,7 @@
                 .then(songsData => {
                     // Фильтруем песни для текущего дня
                     const todaySongs = songsData.filter(song => {
-                        const songId = song.id;
+                        const songId = parseInt(song.id, 10); // Явно привести к числу
                         const songDay = 1 + (songId % 31); // Остаток от деления + 1
                         return songDay === day;
                     });
