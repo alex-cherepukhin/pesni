@@ -41,14 +41,21 @@
                 console.log("Загружены данные песен:", songsData);
 
                 idx = lunr(function () {
+                    this.ref('id');
                     this.field('title');
                     this.field('text');
-                    this.ref('id');
 
-                    data.forEach(song => {
-                        console.log("Индексируется песня:", song);
-                        this.add(song);
-                    });
+                    this.pipeline.remove(lunr.stemmer); // удалить английский стеммер
+                    this.pipeline.remove(lunr.stopWordFilter); // удалить английские стоп-слова
+
+                    songsData.forEach(song => {
+                            this.add({
+                                id: song.id,
+                                title: song.title.toLowerCase(),
+                                text: song.text.toLowerCase()
+                            });
+                            console.log("Индексируется песня:", song);
+                        });
                 });
 
                 document.getElementById('searchButton').addEventListener('click', performSearch);
@@ -70,7 +77,7 @@
             });
 
         function performSearch() {
-            const query = document.getElementById('searchBar').value.trim();
+            const query = document.getElementById('searchBar').value.trim().toLowerCase();
             console.log("Поисковый запрос:", query);
 
             if (!idx) {
