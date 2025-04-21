@@ -33,7 +33,7 @@
         let idx;
         let songsData;
 
-        fetch('s.json')
+        fetch('songs.json')
             .then(response => response.json())
             .then(data => {
                 songsData = data;
@@ -59,7 +59,7 @@
                 });
             })
             .catch(error => {
-                console.error("Error loading s.json:", error);
+                console.error("Error loading songs.json:", error);
                 document.getElementById('results').innerHTML = `
                     <div class="error-message">
                         <p><strong>Ошибка загрузки данных:</strong> Не удалось загрузить список песен.</p>
