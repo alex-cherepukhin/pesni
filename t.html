@@ -47,7 +47,7 @@
                 `Песни на ${day} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
 
             // Загружаем данные о песнях из JSON файла
-            fetch('songs.json')
+            fetch('songs_all.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Ошибка загрузки данных');
