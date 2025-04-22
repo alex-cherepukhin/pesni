@@ -40,6 +40,9 @@
 
                 console.log("Загружены данные песен:", songsData);
 
+                // Настроим токенизатор для русских слов
+                lunr.tokenizer.separator = /[\s\.,!?«»"“”()\-—:;]+/;
+
                 idx = lunr(function () {
                     this.ref('id');
                     this.field('title');
