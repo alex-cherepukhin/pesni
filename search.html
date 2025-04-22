@@ -83,15 +83,19 @@
                 index.searchAsync(query, { field: "title", limit: 50 }),
                 index.searchAsync(query, { field: "text", limit: 50 })
             ]).then(([byTitle, byText]) => {
-                const results = [...new Map([...byTitle.flat(), ...byText.flat()].map(song => [song.id, song])).values()];
+                // Получаем уникальные ID песен
+                const allResults = [...byTitle.flat(), ...byText.flat()];
+                const uniqueIds = [...new Set(allResults.map(r => r.id))];
 
-                if (results.length === 0) {
+                if (uniqueIds.length === 0) {
                     resultContainer.innerHTML = '<p>Ничего не найдено.</p>';
                     return;
                 }
 
-                results.forEach(result => {
-                    const song = songsData.find(song => song.id === result.id);
+                uniqueIds.forEach(id => {
+                    const song = songsData.find(song => song.id === id);
+                    if (!song) return; // на всякий случай
+
                     const el = document.createElement("div");
                     el.innerHTML = `
                         <p><strong>${song.title}</strong><br>
