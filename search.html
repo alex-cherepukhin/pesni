@@ -29,92 +29,119 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/lunr/lunr.min.js"></script>
-<script>
-    let idx;
-    let songsData;
+    <script>
+        let idx;
+        let songsData;
 
-    // Заменим стандартный tokenizer на более подходящий для русского языка
-    lunr.tokenizer.separator = /[\s\.,!?«»"“”()\-—:;]+/;
+        fetch('songs.json')
+            .then(response => response.json())
+            .then(data => {
+                songsData = data;
 
-    fetch('songs.json')
-        .then(response => response.json())
-        .then(data => {
-            songsData = data;
+                console.log("Загружены данные песен:", songsData);
 
-            // Создание индекса
-            idx = lunr(function () {
-                this.ref('id');
-                this.field('title');
-                this.field('text');
+                // Настроим токенизатор для русских слов
+                lunr.tokenizer.separator = /[\s\.,!?«»"“”()\-—:;]+/;
 
-                this.pipeline.remove(lunr.stemmer); // Удалить английский стеммер
-                this.pipeline.remove(lunr.stopWordFilter); // Удалить английские стоп-слова
+                idx = lunr(function () {
+                    this.ref('id');
+                    this.field('title');
+                    this.field('text');
 
-                data.forEach(song => {
-                    this.add({
-                        id: song.id,
-                        title: song.title.toLowerCase(),
-                        text: song.text.toLowerCase()
-                    });
+                    this.pipeline.remove(lunr.stemmer); // удалить английский стеммер
+                    this.pipeline.remove(lunr.stopWordFilter); // удалить английские стоп-слова
+
+                    songsData.forEach(song => {
+                            this.add({
+                                id: song.id,
+                                title: song.title.toLowerCase(),
+                                text: song.text.toLowerCase()
+                            });
+                            console.log("Индексируется песня:", song);
+                        });
                 });
+
+                document.getElementById('searchButton').addEventListener('click', performSearch);
+                document.getElementById('searchBar').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error loading songs.json:", error);
+                document.getElementById('results').innerHTML = `
+                    <div class="error-message">
+                        <p><strong>Ошибка загрузки данных:</strong> Не удалось загрузить список песен.</p>
+                        <p>Это может быть вызвано ограничениями CORS при открытии файлов локально.</p>
+                        <p>Рекомендуемое решение: запустите сайт через локальный веб-сервер.</p>
+                    </div>
+                `;
             });
 
-            // Слушатели
-            document.getElementById('searchButton').addEventListener('click', performSearch);
-            document.getElementById('searchBar').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    performSearch();
+        function performSearch() {
+            const query = document.getElementById('searchBar').value.trim().toLowerCase();
+            console.log("Поисковый запрос:", query);
+
+            if (!idx) {
+                console.error("The Lunr index is not initialized!");
+                document.getElementById('results').innerHTML = `
+                    <div class="error-message">
+                        <p><strong>Поиск невозможен:</strong> Индекс поиска не загружен.</p>
+                        <p>Это может быть вызвано ограничениями CORS при открытии файлов локально.</p>
+                        <p>Рекомендуемое решение: запустите сайт через локальный веб-сервер.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!query) {
+                document.getElementById('results').innerHTML = '<p>Введите текст для поиска.</p>';
+                return;
+            }
+
+            const lunrResults = idx.search(query + "*"); // добавить "поиск по началу слова"
+            console.log("Результаты Lunr:", lunrResults);
+
+            const resultContainer = document.getElementById('results');
+            resultContainer.innerHTML = '';
+
+            if (lunrResults.length === 0) {
+                resultContainer.innerHTML = '<p>Результаты не найдены.</p>';
+                return;
+            }
+
+            const filteredResults = lunrResults.filter(result => {
+                const song = songsData.find(song => String(song.id) === result.ref);
+                if (song) {
+                    const fullText = song.title + " " + song.text;
+                    return fullText.toLowerCase().includes(query.toLowerCase());
+                }
+                return false;
+            });
+
+            console.log("Отфильтрованные результаты:", filteredResults);
+
+            if (filteredResults.length === 0) {
+                resultContainer.innerHTML = '<p>Нет результатов, соответствующих фразе.</p>';
+                return;
+            }
+
+            filteredResults.forEach(result => {
+                const song = songsData.find(song => song.id === result.ref);
+                if (song) {
+                    const songElement = document.createElement('div');
+                    songElement.innerHTML = `<p><strong>ID:</strong> ${song.id}<br>
+                                            <strong>Название:</strong> ${song.title}<br>
+                                            <strong>Текст:</strong> ${song.text || '(нет текста)'}<br>
+                                            <a href="${song.url}" target="_blank">Перейти к песне</a></p>`;
+                    resultContainer.appendChild(songElement);
+                } else {
+                    console.error("Song with id " + result.ref + " not found in songsData!");
+                    resultContainer.innerHTML += '<p style="color:red;">Ошибка: внутренняя ошибка поиска.</p>';
                 }
             });
-        })
-        .catch(error => {
-            console.error("Ошибка загрузки songs.json:", error);
-            document.getElementById('results').innerHTML = `
-                <div class="error-message">
-                    <p><strong>Ошибка загрузки данных:</strong> Не удалось загрузить список песен.</p>
-                    <p>Это может быть вызвано ограничениями CORS при открытии файлов локально.</p>
-                    <p>Рекомендуемое решение: запустите сайт через локальный веб-сервер.</p>
-                </div>
-            `;
-        });
-
-    function performSearch() {
-        const queryInput = document.getElementById('searchBar').value.trim().toLowerCase();
-        const resultContainer = document.getElementById('results');
-        resultContainer.innerHTML = '';
-
-        if (!idx) {
-            resultContainer.innerHTML = '<p>Поиск недоступен. Индекс не инициализирован.</p>';
-            return;
         }
-
-        if (!queryInput) {
-            resultContainer.innerHTML = '<p>Введите текст для поиска.</p>';
-            return;
-        }
-
-        // Используем wildcard для начала слова
-        const lunrResults = idx.search(queryInput + "*");
-
-        if (lunrResults.length === 0) {
-            resultContainer.innerHTML = '<p>Ничего не найдено.</p>';
-            return;
-        }
-
-        lunrResults.forEach(result => {
-            const song = songsData.find(song => String(song.id) === result.ref);
-            if (song) {
-                const songElement = document.createElement('div');
-                songElement.innerHTML = `
-                    <p><strong>${song.title}</strong><br>
-                    <a href="${song.url}" target="_blank">Перейти к песне</a></p>
-                `;
-                resultContainer.appendChild(songElement);
-            } else {
-                resultContainer.innerHTML += '<p style="color:red;">Ошибка: песня не найдена.</p>';
-            }
-        });
-    }
-</script>
+    </script>
 </body>
 </html>
