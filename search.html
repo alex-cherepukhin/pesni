@@ -41,7 +41,7 @@
 
         let songsData = [];
 
-        fetch('songs.json')
+        fetch('songs_all.json')
             .then(response => response.json())
             .then(data => {
                 songsData = data;
@@ -59,7 +59,7 @@
                 });
             })
             .catch(error => {
-                console.error("Ошибка загрузки songs.json:", error);
+                console.error("Ошибка загрузки songs_all.json:", error);
                 document.getElementById('results').innerHTML = `
                     <div class="error-message">
                         <p><strong>Ошибка загрузки данных:</strong> Не удалось загрузить список песен.</p>
