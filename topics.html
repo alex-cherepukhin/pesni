@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Фильтр по темам - Песни с аккордами</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Песни</title>
     <link rel="stylesheet" href="CSS/index.css">
     <style>
         .filter-controls {
@@ -32,7 +33,7 @@
             color: white;
         }
         
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background-color: #2980b9;
         }
         
@@ -42,12 +43,17 @@
         }
         
         .btn-secondary {
-            background-color: #95a5a6;
+            background-color: #3498db;
             color: white;
         }
         
-        .btn-secondary:hover {
-            background-color: #7f8c8d;
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
         }
         
         .status-bar {
@@ -152,8 +158,9 @@
         <div class="header-nav">
             <a href="index.html" class="header-cell">АБВ</a>
             <a href="index_full.html" class="header-cell">Все</a>
-            <div class="header-cell title-cell">Темы</div>
-            <!--a href="index_full.html" class="header-cell">Песни</a-->
+            <div class="header-cell title-cell">
+                <h1>Темы</h1>
+            </div>
             <a href="today.html" class="header-cell">Сегодня</a>
             <a href="search.html" class="header-cell">
                 <img src="search.png" alt="Поиск">
@@ -165,7 +172,7 @@
             <button class="btn btn-primary" id="showSongsBtn" onclick="showSongs()">
                 Показать песни
             </button>
-            <button class="btn btn-secondary" onclick="resetFilter()">
+            <button class="btn btn-secondary" id="resetBtn" onclick="resetFilter()">
                 Сбросить фильтр
             </button>
         </div>
@@ -300,14 +307,16 @@
             return Array.from(checkboxes).map(cb => cb.value);
         }
         
-        // Обновление счётчиков
+        // Обновление счётчиков и состояния кнопок
         function updateCounts() {
             const selectedTopics = getSelectedTopics();
-            document.getElementById('selectedCount').textContent = selectedTopics.length;
+            const selectedCount = selectedTopics.length;
+            
+            document.getElementById('selectedCount').textContent = selectedCount;
             
             // Подсчёт песен
             let filteredSongs;
-            if (selectedTopics.length === 0) {
+            if (selectedCount === 0) {
                 filteredSongs = songs;
             } else {
                 filteredSongs = songs.filter(song => 
@@ -317,9 +326,15 @@
             
             document.getElementById('songsCount').textContent = filteredSongs.length;
             
-            // Активность кнопки "Показать песни"
+            // Состояние кнопок
             const showBtn = document.getElementById('showSongsBtn');
-            showBtn.disabled = selectedTopics.length === 0;
+            const resetBtn = document.getElementById('resetBtn');
+            
+            // Кнопка "Показать песни" активна только если выбрано > 0 тем
+            showBtn.disabled = selectedCount === 0;
+            
+            // Кнопка "Сбросить" активна только если выбрано > 0 тем
+            resetBtn.disabled = selectedCount === 0;
         }
         
         // Показать песни
@@ -332,7 +347,7 @@
             }
             
             // Переход на страницу с песнями
-            const url = `songs.html?topics=${selectedTopics.join(',')}&from=topics`;
+            const url = `songs.html?topics=${selectedTopics.join(',')}`;
             window.location.href = url;
         }
         

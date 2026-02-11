@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Список песен - Песни с аккордами</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Песни</title>
     <link rel="stylesheet" href="CSS/index.css">
     <style>
         .filter-info {
@@ -15,17 +16,22 @@
             font-size: 0.95rem;
         }
         
+        .filter-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
         .filter-info-title {
             font-weight: 600;
             color: #1976D2;
-            margin-bottom: 5px;
         }
         
         .filter-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 8px;
         }
         
         .filter-tag {
@@ -41,23 +47,27 @@
             background: #2196F3;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 8px;
+            font-size: 0.85rem;
+            white-space: nowrap;
         }
         
         .btn-change-filter:hover {
             background: #1976D2;
         }
         
-        .results-count {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-            padding: 8px 0;
-            border-bottom: 1px solid #ddd;
+        @media (max-width: 600px) {
+            .filter-info-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .btn-change-filter {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -67,8 +77,7 @@
         <div class="header-nav">
             <a href="index.html" class="header-cell">АБВ</a>
             <a href="index_full.html" class="header-cell">Все</a>
-            <a href="topics.html" class="header-cell">Темы</a>
-            <!--div class="header-cell title-cell">Песни</div-->
+            <a href="topics.html" class="header-cell" id="topicsLink">Темы</a>
             <a href="today.html" class="header-cell">Сегодня</a>
             <a href="search.html" class="header-cell">
                 <img src="search.png" alt="Поиск">
@@ -77,13 +86,12 @@
         
         <!-- Информация о фильтре -->
         <div class="filter-info" id="filterInfo" style="display: none;">
-            <div class="filter-info-title">Активные фильтры:</div>
+            <div class="filter-info-header">
+                <div class="filter-info-title" id="filterTitle">Загрузка...</div>
+                <button class="btn-change-filter" onclick="changeFilter()">Изменить фильтр</button>
+            </div>
             <div class="filter-tags" id="filterTags"></div>
-            <button class="btn-change-filter" onclick="changeFilter()">Изменить фильтр</button>
         </div>
-        
-        <!-- Счётчик результатов -->
-        <div class="results-count" id="resultsCount">Загрузка...</div>
         
         <!-- Алфавитная навигация -->
         <div class="alpha-nav" id="alphaNav"></div>
@@ -93,6 +101,42 @@
     </div>
 
     <script>
+        // Маппинг латинских букв в русские
+        const LETTER_MAPPING = {
+            'A': 'А',
+            'B': 'Б',
+            'V': 'В',
+            'G': 'Г',
+            'D': 'Д',
+            'E': 'Е',
+            'ZH': 'Ж',
+            'Z': 'З',
+            'I': 'И',
+            'K': 'К',
+            'L': 'Л',
+            'M': 'М',
+            'N': 'Н',
+            'O': 'О',
+            'P': 'П',
+            'R': 'Р',
+            'S': 'С',
+            'T': 'Т',
+            'TS': 'Ц',
+            'U': 'У',
+            'F': 'Ф',
+            'H': 'Х',
+            'CH': 'Ч',
+            'SH': 'Ш',
+            'SCH': 'Щ',
+            'Y': 'Ы',
+            'JE': 'Э',
+            'JU': 'Ю',
+            'JA': 'Я'
+        };
+        
+        // Порядок русских букв для сортировки
+        const RUSSIAN_ALPHABET = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ'.split('');
+        
         let topics = {};
         let songs = [];
         let selectedTopics = [];
@@ -115,6 +159,10 @@
                 if (topicsParam) {
                     selectedTopics = topicsParam.split(',');
                     displayFilterInfo();
+                    
+                    // Обновляем ссылку "Темы" в навигации
+                    const topicsLink = document.getElementById('topicsLink');
+                    topicsLink.href = `topics.html?topics=${selectedTopics.join(',')}`;
                 }
                 
                 displaySongs();
@@ -128,10 +176,19 @@
         // Отображение информации о фильтре
         function displayFilterInfo() {
             const filterInfo = document.getElementById('filterInfo');
+            const filterTitle = document.getElementById('filterTitle');
             const filterTags = document.getElementById('filterTags');
             
             if (selectedTopics.length > 0) {
                 filterInfo.style.display = 'block';
+                
+                // Подсчитываем количество песен
+                const filteredSongs = songs.filter(song => 
+                    selectedTopics.includes(song.topic || '')
+                );
+                
+                // Заголовок с количеством
+                filterTitle.textContent = `Найдено: ${filteredSongs.length}. Активные фильтры:`;
                 
                 // Создаём теги для каждой выбранной темы
                 filterTags.innerHTML = '';
@@ -157,6 +214,11 @@
             window.location.href = `topics.html?topics=${selectedTopics.join(',')}`;
         }
         
+        // Конвертация латинской буквы в русскую
+        function latinToRussian(latin) {
+            return LETTER_MAPPING[latin] || latin;
+        }
+        
         // Отображение списка песен
         function displaySongs() {
             // Фильтруем песни
@@ -169,10 +231,7 @@
                 );
             }
             
-            // Обновляем счётчик
             const count = filteredSongs.length;
-            document.getElementById('resultsCount').textContent = 
-                `Найдено песен: ${count}`;
             
             if (count === 0) {
                 document.getElementById('songsContainer').innerHTML = 
@@ -180,40 +239,60 @@
                 return;
             }
             
-            // Группируем по буквам
-            const songsByLetter = {};
+            // Группируем по латинским буквам
+            const songsByLatinLetter = {};
             filteredSongs.forEach(song => {
-                const letter = song.letter || '?';
-                if (!songsByLetter[letter]) {
-                    songsByLetter[letter] = [];
+                const latinLetter = song.letter || '?';
+                if (!songsByLatinLetter[latinLetter]) {
+                    songsByLatinLetter[latinLetter] = [];
                 }
-                songsByLetter[letter].push(song);
+                songsByLatinLetter[latinLetter].push(song);
             });
             
-            // Сортируем буквы
-            const sortedLetters = Object.keys(songsByLetter).sort();
+            // Конвертируем в русские буквы и сортируем
+            const songsByRussianLetter = {};
+            const russianLetters = [];
+            
+            Object.keys(songsByLatinLetter).forEach(latinLetter => {
+                const russianLetter = latinToRussian(latinLetter);
+                songsByRussianLetter[russianLetter] = songsByLatinLetter[latinLetter];
+                russianLetters.push(russianLetter);
+            });
+            
+            // Сортируем буквы по русскому алфавиту
+            russianLetters.sort((a, b) => {
+                const indexA = RUSSIAN_ALPHABET.indexOf(a);
+                const indexB = RUSSIAN_ALPHABET.indexOf(b);
+                
+                // Если буква не в алфавите, помещаем её в конец
+                if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+                if (indexA === -1) return 1;
+                if (indexB === -1) return -1;
+                
+                return indexA - indexB;
+            });
             
             // Создаём алфавитную навигацию
-            createAlphaNav(sortedLetters);
+            createAlphaNav(russianLetters);
             
             // Отображаем песни по буквам
             const container = document.getElementById('songsContainer');
             container.innerHTML = '';
             
-            sortedLetters.forEach(letter => {
+            russianLetters.forEach(russianLetter => {
                 const group = document.createElement('div');
                 group.className = 'letter-group';
-                group.id = `letter-${letter}`;
+                group.id = `letter-${russianLetter}`;
                 
                 // Заголовок группы
                 const header = document.createElement('h2');
-                header.textContent = letter;
+                header.textContent = russianLetter;
                 header.style.marginBottom = '10px';
                 header.style.color = '#2c3e50';
                 group.appendChild(header);
                 
                 // Сортируем песни внутри группы
-                const sortedSongs = songsByLetter[letter].sort((a, b) => 
+                const sortedSongs = songsByRussianLetter[russianLetter].sort((a, b) => 
                     a.title.localeCompare(b.title, 'ru')
                 );
                 
