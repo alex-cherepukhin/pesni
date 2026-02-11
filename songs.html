@@ -149,8 +149,10 @@
                 
                 if (selectedTopics.length > 0 || selectedBooks.length > 0) {
                     displayFilterInfo();
-                    updateNavigationLinks();
                 }
+                
+                // ВСЕГДА обновляем обе ссылки навигации
+                updateNavigationLinks();
                 
                 displaySongs();
             } catch (error) {
@@ -162,15 +164,36 @@
         
         // Обновление ссылок в навигации с сохранением фильтров
         function updateNavigationLinks() {
-            if (selectedTopics.length > 0) {
-                const topicsLink = document.getElementById('topicsLink');
-                topicsLink.href = `topics.html?topics=${selectedTopics.join(',')}`;
-            }
+            const topicsLink = document.getElementById('topicsLink');
+            const booksLink = document.getElementById('booksLink');
             
-            if (selectedBooks.length > 0) {
-                const booksLink = document.getElementById('booksLink');
-                booksLink.href = `books.html?books=${selectedBooks.join(',')}`;
+            // Формируем параметры для ссылки "Темы"
+            let topicsUrl = 'topics.html';
+            const topicsParams = [];
+            if (selectedTopics.length > 0) {
+                topicsParams.push(`topics=${selectedTopics.join(',')}`);
             }
+            if (selectedBooks.length > 0) {
+                topicsParams.push(`books=${selectedBooks.join(',')}`);
+            }
+            if (topicsParams.length > 0) {
+                topicsUrl += '?' + topicsParams.join('&');
+            }
+            topicsLink.href = topicsUrl;
+            
+            // Формируем параметры для ссылки "Книги"
+            let booksUrl = 'books.html';
+            const booksParams = [];
+            if (selectedBooks.length > 0) {
+                booksParams.push(`books=${selectedBooks.join(',')}`);
+            }
+            if (selectedTopics.length > 0) {
+                booksParams.push(`topics=${selectedTopics.join(',')}`);
+            }
+            if (booksParams.length > 0) {
+                booksUrl += '?' + booksParams.join('&');
+            }
+            booksLink.href = booksUrl;
         }
         
         // Отображение информации о фильтре
@@ -229,11 +252,14 @@
         function changeFilter() {
             // Если есть фильтр по книгам, возвращаемся на books.html
             if (selectedBooks.length > 0) {
-                let url = `books.html?books=${selectedBooks.join(',')}`;
-                if (selectedTopics.length > 0) {
-                    url += `&topics=${selectedTopics.join(',')}`;
+                const params = [];
+                if (selectedBooks.length > 0) {
+                    params.push(`books=${selectedBooks.join(',')}`);
                 }
-                window.location.href = url;
+                if (selectedTopics.length > 0) {
+                    params.push(`topics=${selectedTopics.join(',')}`);
+                }
+                window.location.href = `books.html?${params.join('&')}`;
             }
             // Иначе на topics.html
             else if (selectedTopics.length > 0) {
