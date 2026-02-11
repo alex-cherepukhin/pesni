@@ -157,7 +157,7 @@
                 const topicsParam = urlParams.get('topics');
                 
                 if (topicsParam) {
-                    selectedTopics = topicsParam.split(',');
+                    selectedTopics = topicsParam.split(',').filter(t => t !== '');
                     displayFilterInfo();
                     
                     // Обновляем ссылку "Темы" в навигации
@@ -182,9 +182,12 @@
             if (selectedTopics.length > 0) {
                 filterInfo.style.display = 'block';
                 
+                // Конвертируем "empty" в пустую строку для фильтрации
+                const topicsToFilter = selectedTopics.map(t => t === 'empty' ? '' : t);
+                
                 // Подсчитываем количество песен
                 const filteredSongs = songs.filter(song => 
-                    selectedTopics.includes(song.topic || '')
+                    topicsToFilter.includes(song.topic || '')
                 );
                 
                 // Заголовок с количеством
@@ -196,7 +199,7 @@
                     const tag = document.createElement('span');
                     tag.className = 'filter-tag';
                     
-                    if (topicAlias === '') {
+                    if (topicAlias === 'empty') {
                         tag.textContent = '(без темы)';
                     } else if (topics[topicAlias]) {
                         tag.textContent = topics[topicAlias].name;
@@ -221,13 +224,16 @@
         
         // Отображение списка песен
         function displaySongs() {
+            // Конвертируем "empty" в пустую строку для фильтрации
+            const topicsToFilter = selectedTopics.map(t => t === 'empty' ? '' : t);
+            
             // Фильтруем песни
             let filteredSongs;
-            if (selectedTopics.length === 0) {
+            if (topicsToFilter.length === 0) {
                 filteredSongs = songs;
             } else {
                 filteredSongs = songs.filter(song => 
-                    selectedTopics.includes(song.topic || '')
+                    topicsToFilter.includes(song.topic || '')
                 );
             }
             

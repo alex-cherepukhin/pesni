@@ -230,7 +230,7 @@
             const container = document.getElementById('topicsList');
             
             // Добавляем "(без темы)"
-            container.appendChild(createTopicItem('', '(без темы)'));
+            container.appendChild(createTopicItem('empty', '(без темы)'));
             
             // Добавляем остальные темы (сортируем по названию)
             const sortedTopics = Object.entries(topics).sort((a, b) => 
@@ -260,12 +260,14 @@
             div.appendChild(checkbox);
             div.appendChild(label);
             
-            // Клик по div тоже переключает чекбокс
-            div.onclick = (e) => {
+            // Клик по div переключает чекбокс (обработка события на уровне div)
+            div.addEventListener('click', function(e) {
+                // Если кликнули не по самому чекбоксу (например, по label или пустому месту)
                 if (e.target !== checkbox) {
+                    e.preventDefault();
                     checkbox.click();
                 }
-            };
+            });
             
             return div;
         }
@@ -317,8 +319,10 @@
             if (selectedCount === 0) {
                 filteredSongs = songs;
             } else {
+                // Обрабатываем специальное значение "empty" для песен без темы
+                const topicsToFilter = selectedTopics.map(t => t === 'empty' ? '' : t);
                 filteredSongs = songs.filter(song => 
-                    selectedTopics.includes(song.topic || '')
+                    topicsToFilter.includes(song.topic || '')
                 );
             }
             

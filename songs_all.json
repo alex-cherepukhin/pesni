@@ -3111,29 +3111,32 @@
   },
   {
     "id": 313,
-    "title": "180 Ты тверже алмаза",
+    "title": "Ты тверже алмаза",
     "topic": "church",
     "url": "songs/T/ТыТвержеАлмаза.html",
-    "book": "",
-    "letter": "1",
+    "book": "JI",
+    "num": 180,
+    "letter": "T",
     "ton": ""
   },
   {
     "id": 314,
-    "title": "181 Против Церкви воздвигнут вал",
+    "title": "Против Церкви воздвигнут вал",
     "topic": "church",
     "url": "songs/P/ПротивЦерквиВоздвигнут.html",
-    "book": "",
-    "letter": "1",
+    "book": "JI",
+    "num": 181,
+    "letter": "P",
     "ton": ""
   },
   {
     "id": 315,
-    "title": "182 На юге ласковом",
+    "title": "На юге ласковом",
     "topic": "church",
     "url": "songs/N/НаЮгеЛасковом.html",
-    "book": "",
-    "letter": "1",
+    "book": "JI",
+    "num": 182,
+    "letter": "N",
     "ton": ""
   },
   {
@@ -3158,11 +3161,12 @@
   },
   {
     "id": 318,
-    "title": "194 Привет вам, Христово",
+    "title": "Привет вам, Христово",
     "topic": "church",
     "url": "songs/P/ПриветВамХристово.html",
-    "book": "",
-    "letter": "1",
+    "book": "JI",
+    "num": 194,
+    "letter": "P",
     "ton": ""
   },
   {
