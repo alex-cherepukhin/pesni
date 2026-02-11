@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список песен - Песни с аккордами</title>
+    <link rel="stylesheet" href="CSS/index.css">
+    <style>
+        .filter-info {
+            background: #e3f2fd;
+            border: 1px solid #2196F3;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .filter-info-title {
+            font-weight: 600;
+            color: #1976D2;
+            margin-bottom: 5px;
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .filter-tag {
+            background: white;
+            border: 1px solid #2196F3;
+            color: #1976D2;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .btn-change-filter {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+        
+        .btn-change-filter:hover {
+            background: #1976D2;
+        }
+        
+        .results-count {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Навигация -->
+        <div class="header-nav">
+            <a href="index.html" class="header-cell">АБВ</a>
+            <a href="index_full.html" class="header-cell">Все</a>
+            <a href="topics.html" class="header-cell">Темы</a>
+            <!--div class="header-cell title-cell">Песни</div-->
+            <a href="today.html" class="header-cell">Сегодня</a>
+            <a href="search.html" class="header-cell">
+                <img src="search.png" alt="Поиск">
+            </a>
+        </div>
+        
+        <!-- Информация о фильтре -->
+        <div class="filter-info" id="filterInfo" style="display: none;">
+            <div class="filter-info-title">Активные фильтры:</div>
+            <div class="filter-tags" id="filterTags"></div>
+            <button class="btn-change-filter" onclick="changeFilter()">Изменить фильтр</button>
+        </div>
+        
+        <!-- Счётчик результатов -->
+        <div class="results-count" id="resultsCount">Загрузка...</div>
+        
+        <!-- Алфавитная навигация -->
+        <div class="alpha-nav" id="alphaNav"></div>
+        
+        <!-- Список песен по буквам -->
+        <div id="songsContainer"></div>
+    </div>
+
+    <script>
+        let topics = {};
+        let songs = [];
+        let selectedTopics = [];
+        
+        // Загрузка данных
+        async function loadData() {
+            try {
+                const [topicsResponse, songsResponse] = await Promise.all([
+                    fetch('topics.json'),
+                    fetch('songs_all.json')
+                ]);
+                
+                topics = await topicsResponse.json();
+                songs = await songsResponse.json();
+                
+                // Получаем фильтр из URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const topicsParam = urlParams.get('topics');
+                
+                if (topicsParam) {
+                    selectedTopics = topicsParam.split(',');
+                    displayFilterInfo();
+                }
+                
+                displaySongs();
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                document.getElementById('songsContainer').innerHTML = 
+                    '<div style="text-align: center; padding: 40px; color: #999;">Ошибка загрузки данных</div>';
+            }
+        }
+        
+        // Отображение информации о фильтре
+        function displayFilterInfo() {
+            const filterInfo = document.getElementById('filterInfo');
+            const filterTags = document.getElementById('filterTags');
+            
+            if (selectedTopics.length > 0) {
+                filterInfo.style.display = 'block';
+                
+                // Создаём теги для каждой выбранной темы
+                filterTags.innerHTML = '';
+                selectedTopics.forEach(topicAlias => {
+                    const tag = document.createElement('span');
+                    tag.className = 'filter-tag';
+                    
+                    if (topicAlias === '') {
+                        tag.textContent = '(без темы)';
+                    } else if (topics[topicAlias]) {
+                        tag.textContent = topics[topicAlias].name;
+                    } else {
+                        tag.textContent = topicAlias;
+                    }
+                    
+                    filterTags.appendChild(tag);
+                });
+            }
+        }
+        
+        // Изменить фильтр - возврат на страницу выбора тем
+        function changeFilter() {
+            window.location.href = `topics.html?topics=${selectedTopics.join(',')}`;
+        }
+        
+        // Отображение списка песен
+        function displaySongs() {
+            // Фильтруем песни
+            let filteredSongs;
+            if (selectedTopics.length === 0) {
+                filteredSongs = songs;
+            } else {
+                filteredSongs = songs.filter(song => 
+                    selectedTopics.includes(song.topic || '')
+                );
+            }
+            
+            // Обновляем счётчик
+            const count = filteredSongs.length;
+            document.getElementById('resultsCount').textContent = 
+                `Найдено песен: ${count}`;
+            
+            if (count === 0) {
+                document.getElementById('songsContainer').innerHTML = 
+                    '<div style="text-align: center; padding: 40px; color: #999;">Песни не найдены</div>';
+                return;
+            }
+            
+            // Группируем по буквам
+            const songsByLetter = {};
+            filteredSongs.forEach(song => {
+                const letter = song.letter || '?';
+                if (!songsByLetter[letter]) {
+                    songsByLetter[letter] = [];
+                }
+                songsByLetter[letter].push(song);
+            });
+            
+            // Сортируем буквы
+            const sortedLetters = Object.keys(songsByLetter).sort();
+            
+            // Создаём алфавитную навигацию
+            createAlphaNav(sortedLetters);
+            
+            // Отображаем песни по буквам
+            const container = document.getElementById('songsContainer');
+            container.innerHTML = '';
+            
+            sortedLetters.forEach(letter => {
+                const group = document.createElement('div');
+                group.className = 'letter-group';
+                group.id = `letter-${letter}`;
+                
+                // Заголовок группы
+                const header = document.createElement('h2');
+                header.textContent = letter;
+                header.style.marginBottom = '10px';
+                header.style.color = '#2c3e50';
+                group.appendChild(header);
+                
+                // Сортируем песни внутри группы
+                const sortedSongs = songsByLetter[letter].sort((a, b) => 
+                    a.title.localeCompare(b.title, 'ru')
+                );
+                
+                // Добавляем песни
+                sortedSongs.forEach(song => {
+                    const link = document.createElement('a');
+                    link.href = song.url;
+                    link.textContent = song.title;
+                    
+                    // Добавляем мета-информацию
+                    if (song.book || song.ton) {
+                        const meta = document.createElement('span');
+                        meta.style.color = '#666';
+                        meta.style.fontSize = '0.85rem';
+                        meta.style.marginLeft = '8px';
+                        
+                        let metaText = '';
+                        if (song.book) {
+                            metaText += ` (${song.book}${song.num || ''})`;
+                        }
+                        if (song.ton) {
+                            metaText += ` [${song.ton}]`;
+                        }
+                        meta.textContent = metaText;
+                        
+                        link.appendChild(meta);
+                    }
+                    
+                    group.appendChild(link);
+                });
+                
+                container.appendChild(group);
+            });
+        }
+        
+        // Создание алфавитной навигации
+        function createAlphaNav(letters) {
+            const nav = document.getElementById('alphaNav');
+            nav.innerHTML = '';
+            
+            letters.forEach(letter => {
+                const link = document.createElement('a');
+                link.href = `#letter-${letter}`;
+                link.textContent = letter;
+                nav.appendChild(link);
+            });
+        }
+        
+        // Загрузка данных при загрузке страницы
+        loadData();
+    </script>
+</body>
+</html>
