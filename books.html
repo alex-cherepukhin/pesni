@@ -79,20 +79,20 @@
             color: #3498db;
         }
         
-        .topics-section {
+        .books-section {
             background: white;
             border-radius: 8px;
             padding: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .topics-list {
+        .books-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
         
-        .topic-item {
+        .book-item {
             display: flex;
             align-items: center;
             padding: 10px;
@@ -101,18 +101,18 @@
             transition: background-color 0.2s;
         }
         
-        .topic-item:hover {
+        .book-item:hover {
             background-color: #f8f9fa;
         }
         
-        .topic-item input[type="checkbox"] {
+        .book-item input[type="checkbox"] {
             margin-right: 12px;
             width: 18px;
             height: 18px;
             cursor: pointer;
         }
         
-        .topic-item label {
+        .book-item label {
             cursor: pointer;
             user-select: none;
             flex: 1;
@@ -132,7 +132,7 @@
         
         /* Адаптивность: 2 колонки на широких экранах */
         @media (min-width: 600px) {
-            .topics-list {
+            .books-list {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
                 gap: 5px;
@@ -158,8 +158,8 @@
         <div class="header-nav">
             <a href="index.html" class="header-cell">АБВ</a>
             <a href="index_full.html" class="header-cell">Все</a>
-            <div class="header-cell title-cell">Темы</div>
-            <a href="books.html" class="header-cell" id="booksLink">Книги</a>
+            <a href="topics.html" class="header-cell">Темы</a>
+            <div class="header-cell title-cell">Книги</div>
             <a href="today.html" class="header-cell">Сегодня</a>
             <a href="search.html" class="header-cell">
                 <img src="search.png" alt="Поиск">
@@ -178,13 +178,13 @@
         
         <!-- Предупреждение о лимите -->
         <div class="limit-warning" id="limitWarning">
-            ⚠️ Можно выбрать максимум 5 тем
+            ⚠️ Можно выбрать максимум 5 книг
         </div>
         
         <!-- Строка состояния -->
         <div class="status-bar">
             <div class="status-item">
-                <span>Выбрано тем:</span>
+                <span>Выбрано книг:</span>
                 <span class="status-value" id="selectedCount">0</span>
             </div>
             <div class="status-item">
@@ -193,41 +193,31 @@
             </div>
         </div>
         
-        <!-- Список тем -->
-        <div class="topics-section">
-            <div class="topics-list" id="topicsList">
+        <!-- Список книг -->
+        <div class="books-section">
+            <div class="books-list" id="booksList">
                 <!-- Чекбоксы будут добавлены динамически -->
             </div>
         </div>
     </div>
 
     <script>
-        const MAX_TOPICS = 5;
-        let topics = {};
+        const MAX_BOOKS = 5;
+        let books = {};
         let songs = [];
-        let selectedBooks = []; // Сохраняем фильтр по книгам из URL
         
         // Загрузка данных
         async function loadData() {
             try {
-                const [topicsResponse, songsResponse] = await Promise.all([
-                    fetch('topics.json'),
+                const [booksResponse, songsResponse] = await Promise.all([
+                    fetch('books.json'),
                     fetch('songs_all.json')
                 ]);
                 
-                topics = await topicsResponse.json();
+                books = await booksResponse.json();
                 songs = await songsResponse.json();
                 
-                // Проверяем, есть ли фильтр по книгам в URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const booksParam = urlParams.get('books');
-                if (booksParam) {
-                    selectedBooks = booksParam.split(',').filter(b => b !== '');
-                    // Обновляем ссылку на книги с сохранением фильтра
-                    document.getElementById('booksLink').href = `books.html?books=${selectedBooks.join(',')}`;
-                }
-                
-                initializeTopics();
+                initializeBooks();
                 loadFilterFromURL();
                 updateCounts();
             } catch (error) {
@@ -236,36 +226,36 @@
             }
         }
         
-        // Создание списка тем
-        function initializeTopics() {
-            const container = document.getElementById('topicsList');
+        // Создание списка книг
+        function initializeBooks() {
+            const container = document.getElementById('booksList');
             
-            // Добавляем "(без темы)"
-            container.appendChild(createTopicItem('empty', '(без темы)'));
+            // Добавляем "(без книги)"
+            container.appendChild(createBookItem('empty', '(без книги)'));
             
-            // Добавляем остальные темы (сортируем по названию)
-            const sortedTopics = Object.entries(topics).sort((a, b) => 
+            // Добавляем остальные книги (сортируем по названию)
+            const sortedBooks = Object.entries(books).sort((a, b) => 
                 a[1].name.localeCompare(b[1].name, 'ru')
             );
             
-            sortedTopics.forEach(([alias, data]) => {
-                container.appendChild(createTopicItem(alias, data.name));
+            sortedBooks.forEach(([code, data]) => {
+                container.appendChild(createBookItem(code, data.name));
             });
         }
         
-        // Создание элемента темы
-        function createTopicItem(alias, name) {
+        // Создание элемента книги
+        function createBookItem(code, name) {
             const div = document.createElement('div');
-            div.className = 'topic-item';
+            div.className = 'book-item';
             
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            checkbox.id = `topic-${alias}`;
-            checkbox.value = alias;
-            checkbox.onchange = onTopicChange;
+            checkbox.id = `book-${code}`;
+            checkbox.value = code;
+            checkbox.onchange = onBookChange;
             
             const label = document.createElement('label');
-            label.htmlFor = `topic-${alias}`;
+            label.htmlFor = `book-${code}`;
             label.textContent = name;
             
             div.appendChild(checkbox);
@@ -283,11 +273,11 @@
         }
         
         // Обработчик изменения чекбокса
-        function onTopicChange(e) {
-            const selectedCount = getSelectedTopics().length;
+        function onBookChange(e) {
+            const selectedCount = getSelectedBooks().length;
             
             // Проверка лимита
-            if (selectedCount > MAX_TOPICS) {
+            if (selectedCount > MAX_BOOKS) {
                 e.target.checked = false;
                 showLimitWarning();
                 return;
@@ -311,35 +301,28 @@
             document.getElementById('limitWarning').style.display = 'none';
         }
         
-        // Получение выбранных тем
-        function getSelectedTopics() {
-            const checkboxes = document.querySelectorAll('#topicsList input[type="checkbox"]:checked');
+        // Получение выбранных книг
+        function getSelectedBooks() {
+            const checkboxes = document.querySelectorAll('#booksList input[type="checkbox"]:checked');
             return Array.from(checkboxes).map(cb => cb.value);
         }
         
         // Обновление счётчиков и состояния кнопок
         function updateCounts() {
-            const selectedTopics = getSelectedTopics();
-            const selectedCount = selectedTopics.length;
+            const selectedBooks = getSelectedBooks();
+            const selectedCount = selectedBooks.length;
             
             document.getElementById('selectedCount').textContent = selectedCount;
             
-            // Подсчёт песен с учётом фильтра по книгам (если есть)
-            let filteredSongs = songs;
-            
-            // Сначала фильтруем по книгам (если есть)
-            if (selectedBooks.length > 0) {
+            // Подсчёт песен
+            let filteredSongs;
+            if (selectedCount === 0) {
+                filteredSongs = songs;
+            } else {
+                // Конвертируем "empty" в пустую строку для фильтрации
                 const booksToFilter = selectedBooks.map(b => b === 'empty' ? '' : b);
-                filteredSongs = filteredSongs.filter(song => 
+                filteredSongs = songs.filter(song => 
                     booksToFilter.includes(song.book || '')
-                );
-            }
-            
-            // Затем по темам
-            if (selectedCount > 0) {
-                const topicsToFilter = selectedTopics.map(t => t === 'empty' ? '' : t);
-                filteredSongs = filteredSongs.filter(song => 
-                    topicsToFilter.includes(song.topic || '')
                 );
             }
             
@@ -355,17 +338,21 @@
         
         // Показать песни
         function showSongs() {
-            const selectedTopics = getSelectedTopics();
+            const selectedBooks = getSelectedBooks();
             
-            if (selectedTopics.length === 0) {
-                alert('Выберите хотя бы одну тему');
+            if (selectedBooks.length === 0) {
+                alert('Выберите хотя бы одну книгу');
                 return;
             }
             
-            // Формируем URL с учётом фильтра по книгам
-            let url = `songs.html?topics=${selectedTopics.join(',')}`;
-            if (selectedBooks.length > 0) {
-                url += `&books=${selectedBooks.join(',')}`;
+            // Проверяем, есть ли фильтр по темам в URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const topicsParam = urlParams.get('topics');
+            
+            // Формируем URL с учётом существующих фильтров
+            let url = `songs.html?books=${selectedBooks.join(',')}`;
+            if (topicsParam) {
+                url += `&topics=${topicsParam}`;
             }
             
             window.location.href = url;
@@ -373,7 +360,7 @@
         
         // Сброс фильтра
         function resetFilter() {
-            document.querySelectorAll('#topicsList input[type="checkbox"]').forEach(cb => {
+            document.querySelectorAll('#booksList input[type="checkbox"]').forEach(cb => {
                 cb.checked = false;
             });
             updateCounts();
@@ -383,12 +370,12 @@
         // Загрузка фильтра из URL (если вернулись назад)
         function loadFilterFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
-            const topicsParam = urlParams.get('topics');
+            const booksParam = urlParams.get('books');
             
-            if (topicsParam) {
-                const selectedTopics = topicsParam.split(',').slice(0, MAX_TOPICS);
-                selectedTopics.forEach(topic => {
-                    const checkbox = document.getElementById(`topic-${topic}`);
+            if (booksParam) {
+                const selectedBooks = booksParam.split(',').slice(0, MAX_BOOKS);
+                selectedBooks.forEach(book => {
+                    const checkbox = document.getElementById(`book-${book}`);
                     if (checkbox) {
                         checkbox.checked = true;
                     }

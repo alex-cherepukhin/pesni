@@ -78,6 +78,7 @@
             <a href="index.html" class="header-cell">АБВ</a>
             <a href="index_full.html" class="header-cell">Все</a>
             <a href="topics.html" class="header-cell" id="topicsLink">Темы</a>
+            <a href="books.html" class="header-cell" id="booksLink">Книги</a>
             <a href="today.html" class="header-cell">Сегодня</a>
             <a href="search.html" class="header-cell">
                 <img src="search.png" alt="Поиск">
@@ -103,66 +104,52 @@
     <script>
         // Маппинг латинских букв в русские
         const LETTER_MAPPING = {
-            'A': 'А',
-            'B': 'Б',
-            'V': 'В',
-            'G': 'Г',
-            'D': 'Д',
-            'E': 'Е',
-            'ZH': 'Ж',
-            'Z': 'З',
-            'I': 'И',
-            'K': 'К',
-            'L': 'Л',
-            'M': 'М',
-            'N': 'Н',
-            'O': 'О',
-            'P': 'П',
-            'R': 'Р',
-            'S': 'С',
-            'T': 'Т',
-            'TS': 'Ц',
-            'U': 'У',
-            'F': 'Ф',
-            'H': 'Х',
-            'CH': 'Ч',
-            'SH': 'Ш',
-            'SCH': 'Щ',
-            'Y': 'Ы',
-            'JE': 'Э',
-            'JU': 'Ю',
-            'JA': 'Я'
+            'A': 'А', 'B': 'Б', 'V': 'В', 'G': 'Г', 'D': 'Д',
+            'E': 'Е', 'ZH': 'Ж', 'Z': 'З', 'I': 'И', 'K': 'К',
+            'L': 'Л', 'M': 'М', 'N': 'Н', 'O': 'О', 'P': 'П',
+            'R': 'Р', 'S': 'С', 'T': 'Т', 'TS': 'Ц', 'U': 'У',
+            'F': 'Ф', 'H': 'Х', 'CH': 'Ч', 'SH': 'Ш', 'SCH': 'Щ',
+            'Y': 'Ы', 'JE': 'Э', 'JU': 'Ю', 'JA': 'Я'
         };
         
         // Порядок русских букв для сортировки
         const RUSSIAN_ALPHABET = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ'.split('');
         
         let topics = {};
+        let books = {};
         let songs = [];
         let selectedTopics = [];
+        let selectedBooks = [];
         
         // Загрузка данных
         async function loadData() {
             try {
-                const [topicsResponse, songsResponse] = await Promise.all([
+                const [topicsResponse, booksResponse, songsResponse] = await Promise.all([
                     fetch('topics.json'),
+                    fetch('books.json'),
                     fetch('songs_all.json')
                 ]);
                 
                 topics = await topicsResponse.json();
+                books = await booksResponse.json();
                 songs = await songsResponse.json();
                 
-                // Получаем фильтр из URL
+                // Получаем фильтры из URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const topicsParam = urlParams.get('topics');
+                const booksParam = urlParams.get('books');
                 
                 if (topicsParam) {
                     selectedTopics = topicsParam.split(',').filter(t => t !== '');
+                }
+                
+                if (booksParam) {
+                    selectedBooks = booksParam.split(',').filter(b => b !== '');
+                }
+                
+                if (selectedTopics.length > 0 || selectedBooks.length > 0) {
                     displayFilterInfo();
-                    
-                    // Обновляем ссылку "Темы" в навигации
-                    const topicsLink = document.getElementById('topicsLink');
-                    topicsLink.href = `topics.html?topics=${selectedTopics.join(',')}`;
+                    updateNavigationLinks();
                 }
                 
                 displaySongs();
@@ -173,28 +160,54 @@
             }
         }
         
+        // Обновление ссылок в навигации с сохранением фильтров
+        function updateNavigationLinks() {
+            if (selectedTopics.length > 0) {
+                const topicsLink = document.getElementById('topicsLink');
+                topicsLink.href = `topics.html?topics=${selectedTopics.join(',')}`;
+            }
+            
+            if (selectedBooks.length > 0) {
+                const booksLink = document.getElementById('booksLink');
+                booksLink.href = `books.html?books=${selectedBooks.join(',')}`;
+            }
+        }
+        
         // Отображение информации о фильтре
         function displayFilterInfo() {
             const filterInfo = document.getElementById('filterInfo');
             const filterTitle = document.getElementById('filterTitle');
             const filterTags = document.getElementById('filterTags');
             
-            if (selectedTopics.length > 0) {
+            if (selectedTopics.length > 0 || selectedBooks.length > 0) {
                 filterInfo.style.display = 'block';
                 
-                // Конвертируем "empty" в пустую строку для фильтрации
-                const topicsToFilter = selectedTopics.map(t => t === 'empty' ? '' : t);
-                
-                // Подсчитываем количество песен
-                const filteredSongs = songs.filter(song => 
-                    topicsToFilter.includes(song.topic || '')
-                );
+                // Подсчитываем количество песен с учётом обоих фильтров
+                const filteredSongs = filterSongs();
                 
                 // Заголовок с количеством
                 filterTitle.textContent = `Найдено: ${filteredSongs.length}. Активные фильтры:`;
                 
-                // Создаём теги для каждой выбранной темы
+                // Создаём теги: сначала книги, потом темы
                 filterTags.innerHTML = '';
+                
+                // Теги книг
+                selectedBooks.forEach(bookCode => {
+                    const tag = document.createElement('span');
+                    tag.className = 'filter-tag';
+                    
+                    if (bookCode === 'empty') {
+                        tag.textContent = '(без книги)';
+                    } else if (books[bookCode]) {
+                        tag.textContent = books[bookCode].name;
+                    } else {
+                        tag.textContent = bookCode;
+                    }
+                    
+                    filterTags.appendChild(tag);
+                });
+                
+                // Теги тем
                 selectedTopics.forEach(topicAlias => {
                     const tag = document.createElement('span');
                     tag.className = 'filter-tag';
@@ -212,9 +225,20 @@
             }
         }
         
-        // Изменить фильтр - возврат на страницу выбора тем
+        // Изменить фильтр - возврат на последнюю использованную страницу фильтра
         function changeFilter() {
-            window.location.href = `topics.html?topics=${selectedTopics.join(',')}`;
+            // Если есть фильтр по книгам, возвращаемся на books.html
+            if (selectedBooks.length > 0) {
+                let url = `books.html?books=${selectedBooks.join(',')}`;
+                if (selectedTopics.length > 0) {
+                    url += `&topics=${selectedTopics.join(',')}`;
+                }
+                window.location.href = url;
+            }
+            // Иначе на topics.html
+            else if (selectedTopics.length > 0) {
+                window.location.href = `topics.html?topics=${selectedTopics.join(',')}`;
+            }
         }
         
         // Конвертация латинской буквы в русскую
@@ -222,21 +246,32 @@
             return LETTER_MAPPING[latin] || latin;
         }
         
-        // Отображение списка песен
-        function displaySongs() {
-            // Конвертируем "empty" в пустую строку для фильтрации
-            const topicsToFilter = selectedTopics.map(t => t === 'empty' ? '' : t);
+        // Фильтрация песен с учётом обоих фильтров (логика AND)
+        function filterSongs() {
+            let filteredSongs = songs;
             
-            // Фильтруем песни
-            let filteredSongs;
-            if (topicsToFilter.length === 0) {
-                filteredSongs = songs;
-            } else {
-                filteredSongs = songs.filter(song => 
+            // Фильтр по книгам
+            if (selectedBooks.length > 0) {
+                const booksToFilter = selectedBooks.map(b => b === 'empty' ? '' : b);
+                filteredSongs = filteredSongs.filter(song => 
+                    booksToFilter.includes(song.book || '')
+                );
+            }
+            
+            // Фильтр по темам (AND - применяется к уже отфильтрованным по книгам)
+            if (selectedTopics.length > 0) {
+                const topicsToFilter = selectedTopics.map(t => t === 'empty' ? '' : t);
+                filteredSongs = filteredSongs.filter(song => 
                     topicsToFilter.includes(song.topic || '')
                 );
             }
             
+            return filteredSongs;
+        }
+        
+        // Отображение списка песен
+        function displaySongs() {
+            const filteredSongs = filterSongs();
             const count = filteredSongs.length;
             
             if (count === 0) {
@@ -270,7 +305,6 @@
                 const indexA = RUSSIAN_ALPHABET.indexOf(a);
                 const indexB = RUSSIAN_ALPHABET.indexOf(b);
                 
-                // Если буква не в алфавите, помещаем её в конец
                 if (indexA === -1 && indexB === -1) return a.localeCompare(b);
                 if (indexA === -1) return 1;
                 if (indexB === -1) return -1;
