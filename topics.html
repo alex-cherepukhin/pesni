@@ -223,9 +223,10 @@
                 const booksParam = urlParams.get('books');
                 if (booksParam) {
                     selectedBooks = booksParam.split(',').filter(b => b !== '');
-                    // Обновляем ссылку на книги с сохранением фильтра
-                    document.getElementById('booksLink').href = `books.html?books=${selectedBooks.join(',')}`;
                 }
+                
+                // Обновляем ссылку "Книги" для сохранения текущих тем при переходе
+                updateBooksLink();
                 
                 initializeTopics();
                 loadFilterFromURL();
@@ -234,6 +235,28 @@
                 console.error('Ошибка загрузки данных:', error);
                 alert('Ошибка загрузки данных. Пожалуйста, обновите страницу.');
             }
+        }
+        
+        // Обновление ссылки "Книги" с учётом выбранных тем
+        function updateBooksLink() {
+            const selectedTopics = getSelectedTopics();
+            const booksLink = document.getElementById('booksLink');
+            
+            let url = 'books.html';
+            const params = [];
+            
+            if (selectedBooks.length > 0) {
+                params.push(`books=${selectedBooks.join(',')}`);
+            }
+            if (selectedTopics.length > 0) {
+                params.push(`topics=${selectedTopics.join(',')}`);
+            }
+            
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+            
+            booksLink.href = url;
         }
         
         // Создание списка тем
@@ -295,6 +318,7 @@
             
             hideLimitWarning();
             updateCounts();
+            updateBooksLink(); // Обновляем ссылку при изменении выбора
         }
         
         // Показать предупреждение о лимите
@@ -363,12 +387,12 @@
             }
             
             // Формируем URL с учётом фильтра по книгам
-            let url = `songs.html?topics=${selectedTopics.join(',')}`;
+            const params = [`topics=${selectedTopics.join(',')}`];
             if (selectedBooks.length > 0) {
-                url += `&books=${selectedBooks.join(',')}`;
+                params.push(`books=${selectedBooks.join(',')}`);
             }
             
-            window.location.href = url;
+            window.location.href = `songs.html?${params.join('&')}`;
         }
         
         // Сброс фильтра
@@ -377,6 +401,7 @@
                 cb.checked = false;
             });
             updateCounts();
+            updateBooksLink();
             hideLimitWarning();
         }
         
@@ -394,6 +419,7 @@
                     }
                 });
                 updateCounts();
+                updateBooksLink();
             }
         }
         

@@ -158,7 +158,7 @@
         <div class="header-nav">
             <a href="index.html" class="header-cell">АБВ</a>
             <a href="index_full.html" class="header-cell">Все</a>
-            <a href="topics.html" class="header-cell">Темы</a>
+            <a href="topics.html" class="header-cell" id="topicsLink">Темы</a>
             <div class="header-cell title-cell">Книги</div>
             <a href="today.html" class="header-cell">Сегодня</a>
             <a href="search.html" class="header-cell">
@@ -205,6 +205,7 @@
         const MAX_BOOKS = 5;
         let books = {};
         let songs = [];
+        let selectedTopics = []; // Сохраняем фильтр по темам из URL
         
         // Загрузка данных
         async function loadData() {
@@ -217,6 +218,16 @@
                 books = await booksResponse.json();
                 songs = await songsResponse.json();
                 
+                // Проверяем, есть ли фильтр по темам в URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const topicsParam = urlParams.get('topics');
+                if (topicsParam) {
+                    selectedTopics = topicsParam.split(',').filter(t => t !== '');
+                }
+                
+                // Обновляем ссылку "Темы" для сохранения текущих книг при переходе
+                updateTopicsLink();
+                
                 initializeBooks();
                 loadFilterFromURL();
                 updateCounts();
@@ -224,6 +235,28 @@
                 console.error('Ошибка загрузки данных:', error);
                 alert('Ошибка загрузки данных. Пожалуйста, обновите страницу.');
             }
+        }
+        
+        // Обновление ссылки "Темы" с учётом выбранных книг
+        function updateTopicsLink() {
+            const selectedBooks = getSelectedBooks();
+            const topicsLink = document.getElementById('topicsLink');
+            
+            let url = 'topics.html';
+            const params = [];
+            
+            if (selectedTopics.length > 0) {
+                params.push(`topics=${selectedTopics.join(',')}`);
+            }
+            if (selectedBooks.length > 0) {
+                params.push(`books=${selectedBooks.join(',')}`);
+            }
+            
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+            
+            topicsLink.href = url;
         }
         
         // Создание списка книг
@@ -285,6 +318,7 @@
             
             hideLimitWarning();
             updateCounts();
+            updateTopicsLink(); // Обновляем ссылку при изменении выбора
         }
         
         // Показать предупреждение о лимите
@@ -314,15 +348,22 @@
             
             document.getElementById('selectedCount').textContent = selectedCount;
             
-            // Подсчёт песен
-            let filteredSongs;
-            if (selectedCount === 0) {
-                filteredSongs = songs;
-            } else {
-                // Конвертируем "empty" в пустую строку для фильтрации
+            // Подсчёт песен с учётом фильтра по темам (если есть)
+            let filteredSongs = songs;
+            
+            // Сначала фильтруем по книгам
+            if (selectedCount > 0) {
                 const booksToFilter = selectedBooks.map(b => b === 'empty' ? '' : b);
-                filteredSongs = songs.filter(song => 
+                filteredSongs = filteredSongs.filter(song => 
                     booksToFilter.includes(song.book || '')
+                );
+            }
+            
+            // Затем по темам (если есть)
+            if (selectedTopics.length > 0) {
+                const topicsToFilter = selectedTopics.map(t => t === 'empty' ? '' : t);
+                filteredSongs = filteredSongs.filter(song => 
+                    topicsToFilter.includes(song.topic || '')
                 );
             }
             
@@ -345,17 +386,13 @@
                 return;
             }
             
-            // Проверяем, есть ли фильтр по темам в URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const topicsParam = urlParams.get('topics');
-            
-            // Формируем URL с учётом существующих фильтров
-            let url = `songs.html?books=${selectedBooks.join(',')}`;
-            if (topicsParam) {
-                url += `&topics=${topicsParam}`;
+            // Формируем URL с учётом фильтра по темам
+            const params = [`books=${selectedBooks.join(',')}`];
+            if (selectedTopics.length > 0) {
+                params.push(`topics=${selectedTopics.join(',')}`);
             }
             
-            window.location.href = url;
+            window.location.href = `songs.html?${params.join('&')}`;
         }
         
         // Сброс фильтра
@@ -364,6 +401,7 @@
                 cb.checked = false;
             });
             updateCounts();
+            updateTopicsLink();
             hideLimitWarning();
         }
         
@@ -381,6 +419,7 @@
                     }
                 });
                 updateCounts();
+                updateTopicsLink();
             }
         }
         
