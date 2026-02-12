@@ -48,6 +48,7 @@
             color: #666;
             font-size: 0.9rem;
             margin-top: 10px;
+            display: none;
         }
         
         .error-message {
@@ -77,7 +78,7 @@
         <!-- Дата и навигация -->
         <div class="date-display">
             <h2 id="current-date">Песни на сегодня</h2>
-            <div class="songs-count" id="songs-count">Загрузка...</div>
+            <div class="songs-count" id="songs-count"></div>
             <div class="date-nav">
                 <a href="yesterday.html" class="date-link">← Вчера</a>
             </div>
@@ -141,7 +142,6 @@
                     console.error('Ошибка:', error);
                     document.getElementById('songs-container').style.display = 'none';
                     document.getElementById('error-message').style.display = 'block';
-                    document.getElementById('songs-count').style.display = 'none';
                 });
         });
 
@@ -151,7 +151,8 @@
             const songsCount = document.getElementById("songs-count");
             
             if (songs.length > 0) {
-                songsCount.textContent = `Найдено: ${songs.length} ${getPluralForm(songs.length, 'песня', 'песни', 'песен')}`;
+                // Не показываем счётчик, если песни найдены
+                songsCount.style.display = 'none';
                 
                 songsContainer.innerHTML = "";
                 songs.forEach(song => {
@@ -172,26 +173,11 @@
                     songsContainer.appendChild(songLink);
                 });
             } else {
+                // Показываем сообщение только если ничего не найдено
                 songsCount.textContent = "Песен не найдено";
+                songsCount.style.display = 'block';
                 songsContainer.innerHTML = "<p>На сегодня нет песен. Проверьте завтра!</p>";
             }
-        }
-        
-        // Склонение слов
-        function getPluralForm(number, one, two, five) {
-            let n = Math.abs(number);
-            n %= 100;
-            if (n >= 5 && n <= 20) {
-                return five;
-            }
-            n %= 10;
-            if (n === 1) {
-                return one;
-            }
-            if (n >= 2 && n <= 4) {
-                return two;
-            }
-            return five;
         }
     </script>
 </body>
