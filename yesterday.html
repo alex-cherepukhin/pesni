@@ -62,13 +62,13 @@
 </head>
 <body>
     <div class="container">
-        <!-- Навигация -->
+        <!-- Навигация (без подсветки) -->
         <div class="header-nav">
             <a href="index.html" class="header-cell">АБВ</a>
             <a href="index_full.html" class="header-cell">Все</a>
             <a href="topics.html" class="header-cell">Темы</a>
             <a href="books.html" class="header-cell">Книги</a>
-            <div class="header-cell title-cell">Сегодня</div>
+            <a href="today.html" class="header-cell">Сегодня</a>
             <a href="search.html" class="header-cell">
                 <img src="search.png" alt="Поиск">
             </a>
@@ -76,10 +76,10 @@
         
         <!-- Дата и навигация -->
         <div class="date-display">
-            <h2 id="current-date">Песни на сегодня</h2>
+            <h2 id="current-date">Песни на вчера</h2>
             <div class="songs-count" id="songs-count">Загрузка...</div>
             <div class="date-nav">
-                <a href="yesterday.html" class="date-link">← Вчера</a>
+                <a href="today.html" class="date-link">Сегодня →</a>
             </div>
         </div>
         
@@ -104,16 +104,19 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Получаем текущую дату
+            // Получаем вчерашнюю дату
             const today = new Date();
-            const day = today.getDate(); // День месяца (1-31)
-            const month = today.getMonth() + 1; // Месяц (1-12)
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const day = yesterday.getDate(); // День месяца (1-31)
+            const month = yesterday.getMonth() + 1; // Месяц (1-12)
             const monthNames = ["января", "февраля", "марта", "апреля", "мая", "июня", 
                                 "июля", "августа", "сентября", "октября", "ноября", "декабря"];
             
-            // Отображаем текущую дату
+            // Отображаем вчерашнюю дату
             document.getElementById("current-date").textContent = 
-                `Песни на ${day} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+                `Песни на ${day} ${monthNames[yesterday.getMonth()]} ${yesterday.getFullYear()}`;
 
             // Загружаем данные о песнях из JSON файла
             fetch('songs_all.json')
@@ -124,18 +127,18 @@
                     return response.json();
                 })
                 .then(songsData => {
-                    // Фильтруем песни для текущего дня с учётом месяца
-                    const todaySongs = songsData.filter(song => {
+                    // Фильтруем песни для вчерашнего дня с учётом месяца
+                    const yesterdaySongs = songsData.filter(song => {
                         const songId = parseInt(song.id, 10);
                         const songDay = getSongDayOfMonth(songId, month);
                         return songDay === day;
                     });
 
                     // Сортируем по алфавиту
-                    todaySongs.sort((a, b) => a.title.localeCompare(b.title, 'ru'));
+                    yesterdaySongs.sort((a, b) => a.title.localeCompare(b.title, 'ru'));
 
                     // Отображаем песни
-                    displaySongs(todaySongs);
+                    displaySongs(yesterdaySongs);
                 })
                 .catch(error => {
                     console.error('Ошибка:', error);
@@ -173,7 +176,7 @@
                 });
             } else {
                 songsCount.textContent = "Песен не найдено";
-                songsContainer.innerHTML = "<p>На сегодня нет песен. Проверьте завтра!</p>";
+                songsContainer.innerHTML = "<p>На вчера нет песен.</p>";
             }
         }
         
