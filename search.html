@@ -1,109 +1,434 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поиск песен</title>
-    <link rel="stylesheet" href="CSS/search.css">
-    <script src="https://cdn.jsdelivr.net/npm/flexsearch@0.7.31/dist/flexsearch.bundle.js"></script>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Песни</title>
+    <link rel="stylesheet" href="CSS/index.css">
+    <style>
+        .search-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .search-button {
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .search-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .search-button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .search-info {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .search-status {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .search-status.show {
+            display: block;
+        }
+        
+        .results-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .results-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .result-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 1.05rem;
+            display: block;
+        }
+        
+        .result-link:hover {
+            text-decoration: underline;
+        }
+        
+        .result-meta {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            font-weight: 600;
+            padding: 0 2px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        @media (max-width: 600px) {
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-button {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        <!-- Навигация -->
         <div class="header-nav">
             <a href="index.html" class="header-cell">АБВ</a>
             <a href="index_full.html" class="header-cell">Все</a>
             <a href="topics.html" class="header-cell">Темы</a>
-            <a href="books.html" class="header-cell" id="booksLink">Книги</a>
+            <a href="books.html" class="header-cell">Книги</a>
             <a href="today.html" class="header-cell">Сегодня</a>
-            <a href="search.html" class="header-cell title-cell active">
-                <img src="search.png" alt="Поиск">
-            </a>
+            <div class="header-cell title-cell">Поиск</div>
         </div>
-
-        <nav class="search-nav">
-            <input type="text" id="searchBar" placeholder="Введите текст для поиска">
-            <button id="searchButton">Искать</button>
-        </nav>
-
-        <div id="results"></div>
+        
+        <!-- Поисковая секция -->
+        <div class="search-section">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Введите название или слова из текста песни..."
+                    autocomplete="off"
+                >
+                <button class="search-button" id="searchButton" onclick="performSearch()">
+                    Найти
+                </button>
+            </div>
+            <div class="search-info">
+                Минимум 3 символа для поиска. Поиск выполняется по названиям и текстам песен.
+            </div>
+        </div>
+        
+        <!-- Статус поиска -->
+        <div class="search-status" id="searchStatus"></div>
+        
+        <!-- Результаты -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <ul class="results-list" id="resultsList"></ul>
+        </div>
     </div>
 
     <script>
-        const index = new FlexSearch.Document({
-            cache: 100,
-            tokenize: "forward", // поиск по началу слова
-            document: {
-                id: "id",
-                index: ["title", "text"]
+        let songs = [];
+        let songsTexts = {};
+        let searchTimeout = null;
+        
+        // Загрузка данных при загрузке страницы
+        async function loadData() {
+            try {
+                const [songsResponse, textsResponse] = await Promise.all([
+                    fetch('songs_all.json'),
+                    fetch('songs_texts.json')
+                ]);
+                
+                songs = await songsResponse.json();
+                songsTexts = await textsResponse.json();
+                
+                console.log(`Загружено ${songs.length} песен, ${Object.keys(songsTexts).length} текстов`);
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                showStatus('Ошибка загрузки данных. Пожалуйста, обновите страницу.', 'error');
             }
-        });
-
-        let songsData = [];
-
-        fetch('songs_all.json')
-            .then(response => response.json())
-            .then(data => {
-                songsData = data;
-
-                data.forEach(song => {
-                    // Индексация — приведение к нижнему регистру не требуется
-                    index.add(song);
-                });
-
-                document.getElementById('searchButton').addEventListener('click', performSearch);
-                document.getElementById('searchBar').addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        performSearch();
-                    }
-                });
-            })
-            .catch(error => {
-                console.error("Ошибка загрузки songs_all.json:", error);
-                document.getElementById('results').innerHTML = `
-                    <div class="error-message">
-                        <p><strong>Ошибка загрузки данных:</strong> Не удалось загрузить список песен.</p>
-                        <p>Убедитесь, что сайт запущен через GitHub Pages или локальный веб-сервер.</p>
-                    </div>
-                `;
+        }
+        
+        // Настройка поиска при вводе
+        function setupSearch() {
+            const input = document.getElementById('searchInput');
+            
+            // Поиск при нажатии Enter
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
             });
-
+            
+            // Поиск при вводе (с задержкой)
+            input.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = input.value.trim();
+                
+                if (query.length >= 3) {
+                    searchTimeout = setTimeout(() => {
+                        performSearch();
+                    }, 500); // Задержка 500мс после прекращения ввода
+                } else if (query.length === 0) {
+                    hideResults();
+                }
+            });
+            
+            // Фокус на поле ввода
+            input.focus();
+        }
+        
+        // Показать статус
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('searchStatus');
+            status.textContent = message;
+            status.className = 'search-status show';
+            if (type === 'error') {
+                status.style.borderLeftColor = '#e74c3c';
+                status.style.backgroundColor = '#fadbd8';
+            } else {
+                status.style.borderLeftColor = '#3498db';
+                status.style.backgroundColor = '#e8f4f8';
+            }
+        }
+        
+        // Скрыть статус
+        function hideStatus() {
+            const status = document.getElementById('searchStatus');
+            status.className = 'search-status';
+        }
+        
+        // Показать результаты
+        function showResults() {
+            document.getElementById('resultsSection').style.display = 'block';
+        }
+        
+        // Скрыть результаты
+        function hideResults() {
+            document.getElementById('resultsSection').style.display = 'none';
+            hideStatus();
+        }
+        
+        // Нормализация строки для поиска (в нижний регистр)
+        function normalizeString(str) {
+            return str.toLowerCase().trim();
+        }
+        
+        // Подсветка найденного текста
+        function highlightText(text, query) {
+            if (!query) return text;
+            
+            const lowerText = text.toLowerCase();
+            const lowerQuery = query.toLowerCase();
+            const index = lowerText.indexOf(lowerQuery);
+            
+            if (index === -1) return text;
+            
+            const before = text.substring(0, index);
+            const match = text.substring(index, index + query.length);
+            const after = text.substring(index + query.length);
+            
+            return before + '<span class="highlight">' + match + '</span>' + after;
+        }
+        
+        // Выполнить поиск
         function performSearch() {
-            const query = document.getElementById('searchBar').value.trim();
-            const resultContainer = document.getElementById('results');
-            resultContainer.innerHTML = '';
-
-            if (!query) {
-                resultContainer.innerHTML = '<p>Введите текст для поиска.</p>';
+            const input = document.getElementById('searchInput');
+            const query = input.value.trim();
+            
+            // Проверка минимальной длины
+            if (query.length < 3) {
+                if (query.length > 0) {
+                    showStatus('Введите минимум 3 символа для поиска');
+                }
+                hideResults();
                 return;
             }
-
-            // Поиск и в заголовке, и в тексте
-            Promise.all([
-                index.searchAsync(query, { field: "title", limit: 50 }),
-                index.searchAsync(query, { field: "text", limit: 50 })
-            ]).then(([byTitle, byText]) => {
-                // Получаем уникальные ID песен
-                const allResults = [...byTitle.flat(), ...byText.flat()];
-                const uniqueIds = [...new Set(allResults.map(r => r.id))];
-
-                if (uniqueIds.length === 0) {
-                    resultContainer.innerHTML = '<p>Ничего не найдено.</p>';
-                    return;
-                }
-
-                uniqueIds.forEach(id => {
-                    const song = songsData.find(song => song.id === id);
-                    if (!song) return; // на всякий случай
-
-                    const el = document.createElement("div");
-                    el.innerHTML = `
-                        <p><strong>${song.title}</strong><br>
-                        <a href="${song.url}" target="_blank">Перейти к песне</a></p>
-                    `;
-                    resultContainer.appendChild(el);
-                });
-            });
+            
+            hideStatus();
+            showResults();
+            
+            // Поиск
+            const results = searchSongs(query);
+            
+            // Отображение результатов
+            displayResults(results, query);
         }
+        
+        // Поиск песен
+        function searchSongs(query) {
+            const normalizedQuery = normalizeString(query);
+            const results = [];
+            
+            songs.forEach(song => {
+                let foundIn = null;
+                let relevance = 0;
+                
+                // Поиск в названии
+                const normalizedTitle = normalizeString(song.title);
+                if (normalizedTitle.includes(normalizedQuery)) {
+                    foundIn = 'title';
+                    relevance = 2; // Высокий приоритет
+                }
+                
+                // Поиск в тексте (если не нашли в названии)
+                if (!foundIn) {
+                    const songText = songsTexts[song.id.toString()];
+                    if (songText) {
+                        const normalizedText = normalizeString(songText);
+                        if (normalizedText.includes(normalizedQuery)) {
+                            foundIn = 'text';
+                            relevance = 1; // Низкий приоритет
+                        }
+                    }
+                }
+                
+                // Если нашли - добавляем в результаты
+                if (foundIn) {
+                    results.push({
+                        song: song,
+                        foundIn: foundIn,
+                        relevance: relevance
+                    });
+                }
+            });
+            
+            // Сортировка: сначала по релевантности, потом по алфавиту
+            results.sort((a, b) => {
+                if (a.relevance !== b.relevance) {
+                    return b.relevance - a.relevance; // По убыванию релевантности
+                }
+                return a.song.title.localeCompare(b.song.title, 'ru'); // По алфавиту
+            });
+            
+            return results;
+        }
+        
+        // Отобразить результаты
+        function displayResults(results, query) {
+            const resultsList = document.getElementById('resultsList');
+            
+            if (results.length === 0) {
+                showStatus(`По запросу "${query}" ничего не найдено`);
+                resultsList.innerHTML = '<li class="no-results">Песни не найдены. Попробуйте другой запрос.</li>';
+                return;
+            }
+            
+            showStatus(`Найдено: ${results.length} ${getPluralForm(results.length, 'песня', 'песни', 'песен')}`);
+            
+            // Формируем HTML результатов
+            let html = '';
+            results.forEach(result => {
+                const song = result.song;
+                
+                // Подсвечиваем найденное в названии
+                const titleHtml = result.foundIn === 'title' 
+                    ? highlightText(song.title, query)
+                    : song.title;
+                
+                // Метаинформация
+                let meta = [];
+                if (song.book) {
+                    meta.push(`${song.book}${song.num || ''}`);
+                }
+                if (song.ton) {
+                    meta.push(song.ton);
+                }
+                if (result.foundIn === 'text') {
+                    meta.push('найдено в тексте');
+                }
+                const metaText = meta.length > 0 ? ` <span class="result-meta">(${meta.join(', ')})</span>` : '';
+                
+                html += `
+                    <li class="result-item">
+                        <a href="${song.url}" class="result-link">${titleHtml}</a>
+                        ${metaText}
+                    </li>
+                `;
+            });
+            
+            resultsList.innerHTML = html;
+        }
+        
+        // Склонение слов
+        function getPluralForm(number, one, two, five) {
+            let n = Math.abs(number);
+            n %= 100;
+            if (n >= 5 && n <= 20) {
+                return five;
+            }
+            n %= 10;
+            if (n === 1) {
+                return one;
+            }
+            if (n >= 2 && n <= 4) {
+                return two;
+            }
+            return five;
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            setupSearch();
+        });
     </script>
 </body>
 </html>
