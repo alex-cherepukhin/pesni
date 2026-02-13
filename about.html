@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Песни</title>
+    <link rel="stylesheet" href="CSS/index.css">
+    <style>
+        .about-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .about-section h2 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+        
+        .project-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .project-meta {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        
+        .contact-info {
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .contact-email {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+        
+        .changelog-content {
+            background: #f8f9fa;
+            border-left: 3px solid #3498db;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .changelog-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        
+        .changelog-link:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Навигация (без подсветки) -->
+        <div class="header-nav">
+            <a href="index.html" class="header-cell">АБВ</a>
+            <a href="index_full.html" class="header-cell">Все</a>
+            <a href="topics.html" class="header-cell">Темы</a>
+            <a href="books.html" class="header-cell">Книги</a>
+            <a href="today.html" class="header-cell">Сегодня</a>
+            <a href="search.html" class="header-cell">
+                <img src="search.png" alt="Поиск">
+            </a>
+        </div>
+        
+        <!-- Блок 1: О проекте -->
+        <div class="about-section">
+            <div class="project-title">
+                Песни братства МСЦ с нотами для фортепиано
+            </div>
+            <div class="project-meta">
+                <div id="update-date">Обновлено: загрузка...</div>
+                <div id="statistics">Загрузка статистики...</div>
+            </div>
+        </div>
+        
+        <!-- Блок 2: Обратная связь -->
+        <div class="about-section">
+            <h2>📧 Обратная связь</h2>
+            <div class="contact-info">
+                Нашли ошибку или есть предложение?<br>
+                Напишите на: <a href="mailto:luchezavr@proton.me" class="contact-email">luchezavr@proton.me</a>
+            </div>
+        </div>
+        
+        <!-- Блок 3: История изменений -->
+        <div class="about-section">
+            <h2>📋 История изменений</h2>
+            <div class="changelog-content" id="changelog">
+                <span class="loading">Загрузка истории изменений...</span>
+            </div>
+            <a href="changelog.txt" class="changelog-link" download>📄 Скачать полную историю</a>
+        </div>
+    </div>
+
+    <script>
+        // Загрузка статистики
+        async function loadStatistics() {
+            try {
+                const [songsResponse, booksResponse] = await Promise.all([
+                    fetch('songs_all.json'),
+                    fetch('books.json')
+                ]);
+                
+                const songs = await songsResponse.json();
+                const books = await booksResponse.json();
+                
+                // Подсчёт сборников с песнями
+                const booksWithSongs = new Set();
+                songs.forEach(song => {
+                    if (song.book) {
+                        booksWithSongs.add(song.book);
+                    }
+                });
+                
+                // Обновление статистики
+                document.getElementById('statistics').textContent = 
+                    `В коллекции ${songs.length} ${getPluralForm(songs.length, 'песня', 'песни', 'песен')}, ${booksWithSongs.size} ${getPluralForm(booksWithSongs.size, 'сборник', 'сборника', 'сборников')}`;
+                
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+                document.getElementById('statistics').innerHTML = 
+                    '<span class="error">Ошибка загрузки статистики</span>';
+            }
+        }
+        
+        // Загрузка истории изменений
+        async function loadChangelog() {
+            try {
+                const response = await fetch('changelog.txt');
+                if (!response.ok) {
+                    throw new Error('Не удалось загрузить changelog.txt');
+                }
+                
+                const text = await response.text();
+                
+                // Берём первые 50 строк
+                const lines = text.split('\n');
+                const first50Lines = lines.slice(0, 50).join('\n');
+                
+                document.getElementById('changelog').textContent = first50Lines || 'История изменений пуста';
+                
+            } catch (error) {
+                console.error('Ошибка загрузки changelog:', error);
+                document.getElementById('changelog').innerHTML = 
+                    '<span class="error">Не удалось загрузить историю изменений</span>';
+            }
+        }
+        
+        // Установка даты обновления (текущая дата)
+        function setUpdateDate() {
+            const today = new Date();
+            const monthNames = ["января", "февраля", "марта", "апреля", "мая", "июня", 
+                                "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+            
+            document.getElementById('update-date').textContent = 
+                `Обновлено: ${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+        }
+        
+        // Склонение слов
+        function getPluralForm(number, one, two, five) {
+            let n = Math.abs(number);
+            n %= 100;
+            if (n >= 5 && n <= 20) {
+                return five;
+            }
+            n %= 10;
+            if (n === 1) {
+                return one;
+            }
+            if (n >= 2 && n <= 4) {
+                return two;
+            }
+            return five;
+        }
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            setUpdateDate();
+            loadStatistics();
+            loadChangelog();
+        });
+    </script>
+</body>
+</html>
