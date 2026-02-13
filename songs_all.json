@@ -1373,15 +1373,6 @@
     "ton": "Am"
   },
   {
-    "id": 139,
-    "title": "Голос Духа Святого зовёт",
-    "topic": "",
-    "url": "songs/G/ГолосДухаСвятого.html",
-    "book": "",
-    "letter": "G",
-    "ton": "As"
-  },
-  {
     "id": 140,
     "title": "Любить – это значит жить радостью друга",
     "topic": "wedding",
@@ -1460,15 +1451,6 @@
     "num": 173,
     "letter": "E",
     "ton": "Am"
-  },
-  {
-    "id": 148,
-    "title": "У креста Христова мир течёт рекой",
-    "topic": "",
-    "url": "songs/U/УКрестаХристова.html",
-    "book": "",
-    "letter": "U",
-    "ton": "Em"
   },
   {
     "id": 149,
@@ -3057,7 +3039,7 @@
     "book": "JI",
     "num": 169,
     "letter": "S",
-    "ton": ""
+    "ton": "Hm"
   },
   {
     "id": 308,
@@ -3527,7 +3509,7 @@
     "book": "JI",
     "num": 239,
     "letter": "P",
-    "ton": ""
+    "ton": "G"
   },
   {
     "id": 354,
@@ -3537,7 +3519,7 @@
     "book": "JI",
     "num": 240,
     "letter": "Z",
-    "ton": ""
+    "ton": "C"
   },
   {
     "id": 355,
@@ -3547,7 +3529,7 @@
     "book": "JI",
     "num": 241,
     "letter": "N",
-    "ton": ""
+    "ton": "Am"
   },
   {
     "id": 356,
@@ -3557,7 +3539,7 @@
     "book": "JI",
     "num": 242,
     "letter": "K",
-    "ton": ""
+    "ton": "Cm"
   },
   {
     "id": 357,
@@ -3567,7 +3549,7 @@
     "book": "JI",
     "num": 243,
     "letter": "V",
-    "ton": ""
+    "ton": "Hm"
   },
   {
     "id": 358,
@@ -3577,7 +3559,7 @@
     "book": "JI",
     "num": 244,
     "letter": "K",
-    "ton": ""
+    "ton": "Hm"
   },
   {
     "id": 359,
@@ -3587,7 +3569,7 @@
     "book": "JI",
     "num": 247,
     "letter": "D",
-    "ton": ""
+    "ton": "Gm"
   },
   {
     "id": 360,
@@ -3597,7 +3579,7 @@
     "book": "JI",
     "num": 248,
     "letter": "B",
-    "ton": ""
+    "ton": "Gm"
   },
   {
     "id": 361,
@@ -3607,7 +3589,7 @@
     "book": "JI",
     "num": 249,
     "letter": "E",
-    "ton": ""
+    "ton": "Gm"
   },
   {
     "id": 362,
@@ -3617,7 +3599,7 @@
     "book": "JI",
     "num": 250,
     "letter": "T",
-    "ton": ""
+    "ton": "Fm"
   },
   {
     "id": 363,
@@ -3627,7 +3609,7 @@
     "book": "JI",
     "num": 253,
     "letter": "N",
-    "ton": ""
+    "ton": "Cm"
   },
   {
     "id": 364,
@@ -3637,7 +3619,7 @@
     "book": "JI",
     "num": 254,
     "letter": "K",
-    "ton": ""
+    "ton": "Am"
   },
   {
     "id": 365,
@@ -3647,7 +3629,7 @@
     "book": "JI",
     "num": 255,
     "letter": "R",
-    "ton": ""
+    "ton": "D"
   },
   {
     "id": 366,
@@ -3657,7 +3639,7 @@
     "book": "JI",
     "num": 256,
     "letter": "O",
-    "ton": ""
+    "ton": "Em"
   },
   {
     "id": 367,
@@ -3667,7 +3649,7 @@
     "book": "JI",
     "num": 257,
     "letter": "M",
-    "ton": ""
+    "ton": "Em"
   },
   {
     "id": 368,
@@ -3677,7 +3659,7 @@
     "book": "JI",
     "num": 258,
     "letter": "CH",
-    "ton": ""
+    "ton": "Dm"
   },
   {
     "id": 369,
@@ -3687,7 +3669,7 @@
     "book": "JI",
     "num": 261,
     "letter": "Z",
-    "ton": ""
+    "ton": "Dm"
   },
   {
     "id": 370,
@@ -3697,7 +3679,7 @@
     "book": "JI",
     "num": 263,
     "letter": "S",
-    "ton": ""
+    "ton": "B"
   },
   {
     "id": 371,
@@ -3707,7 +3689,7 @@
     "book": "JI",
     "num": 266,
     "letter": "B",
-    "ton": ""
+    "ton": "F"
   },
   {
     "id": 372,
@@ -3717,7 +3699,7 @@
     "book": "JI",
     "num": 267,
     "letter": "O",
-    "ton": ""
+    "ton": "C"
   },
   {
     "id": 373,
@@ -3727,7 +3709,7 @@
     "book": "JI",
     "num": 269,
     "letter": "P",
-    "ton": ""
+    "ton": "G"
   },
   {
     "id": 374,
@@ -3737,7 +3719,7 @@
     "book": "JI",
     "num": 275,
     "letter": "K",
-    "ton": ""
+    "ton": "D"
   },
   {
     "id": 375,
@@ -3747,7 +3729,7 @@
     "book": "JI",
     "num": 276,
     "letter": "D",
-    "ton": ""
+    "ton": "Em"
   },
   {
     "id": 376,
@@ -3757,7 +3739,7 @@
     "book": "JI",
     "num": 277,
     "letter": "Z",
-    "ton": ""
+    "ton": "Cm"
   },
   {
     "id": 377,
@@ -3767,7 +3749,7 @@
     "book": "JI",
     "num": 278,
     "letter": "G",
-    "ton": ""
+    "ton": "Dm"
   },
   {
     "id": 378,
@@ -3777,7 +3759,7 @@
     "book": "JI",
     "num": 279,
     "letter": "O",
-    "ton": ""
+    "ton": "G"
   },
   {
     "id": 379,
@@ -3787,7 +3769,7 @@
     "book": "JI",
     "num": 84,
     "letter": "F",
-    "ton": ""
+    "ton": "Em"
   },
   {
     "id": 380,
@@ -3797,7 +3779,7 @@
     "book": "JI",
     "num": 98,
     "letter": "ZH",
-    "ton": ""
+    "ton": "G"
   },
   {
     "id": 381,
@@ -3807,7 +3789,7 @@
     "book": "JI",
     "num": 281,
     "letter": "D",
-    "ton": ""
+    "ton": "G"
   },
   {
     "id": 382,
@@ -3817,7 +3799,7 @@
     "book": "JI",
     "num": 282,
     "letter": "N",
-    "ton": ""
+    "ton": "H"
   },
   {
     "id": 383,
@@ -3827,7 +3809,7 @@
     "book": "JI",
     "num": 285,
     "letter": "V",
-    "ton": ""
+    "ton": "Em"
   },
   {
     "id": 384,
@@ -3837,7 +3819,7 @@
     "book": "JI",
     "num": 286,
     "letter": "M",
-    "ton": ""
+    "ton": "Cm"
   },
   {
     "id": 385,
@@ -3847,7 +3829,7 @@
     "book": "JI",
     "num": 287,
     "letter": "E",
-    "ton": ""
+    "ton": "Em"
   },
   {
     "id": 386,
@@ -3857,7 +3839,7 @@
     "book": "JI",
     "num": 288,
     "letter": "K",
-    "ton": ""
+    "ton": "Hm"
   },
   {
     "id": 387,
@@ -3867,7 +3849,7 @@
     "book": "JI",
     "num": 289,
     "letter": "CH",
-    "ton": ""
+    "ton": "Gm"
   },
   {
     "id": 388,
@@ -3877,7 +3859,7 @@
     "book": "JI",
     "num": 291,
     "letter": "S",
-    "ton": ""
+    "ton": "Am"
   },
   {
     "id": 389,
@@ -3887,7 +3869,7 @@
     "book": "JI",
     "num": 292,
     "letter": "O",
-    "ton": ""
+    "ton": "Dm"
   },
   {
     "id": 390,
@@ -3897,7 +3879,7 @@
     "book": "JI",
     "num": 293,
     "letter": "A",
-    "ton": ""
+    "ton": "Em"
   },
   {
     "id": 391,
@@ -3907,7 +3889,7 @@
     "book": "JI",
     "num": 295,
     "letter": "I",
-    "ton": ""
+    "ton": "Gm"
   },
   {
     "id": 392,
@@ -3917,7 +3899,7 @@
     "book": "JI",
     "num": 296,
     "letter": "I",
-    "ton": ""
+    "ton": "Em"
   },
   {
     "id": 393,
@@ -3927,7 +3909,7 @@
     "book": "JI",
     "num": 299,
     "letter": "T",
-    "ton": ""
+    "ton": "Cm"
   },
   {
     "id": 394,
@@ -3937,6 +3919,6 @@
     "book": "JI",
     "num": 252,
     "letter": "P",
-    "ton": ""
+    "ton": "Dm"
   }
 ]
