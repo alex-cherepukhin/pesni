@@ -130,6 +130,17 @@
             display: none;
         }
         
+        .error-message {
+            background: #fadbd8;
+            border: 1px solid #e74c3c;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
         /* Адаптивность: 2 колонки на широких экранах */
         @media (min-width: 600px) {
             .topics-list {
@@ -180,6 +191,9 @@
         <div class="limit-warning" id="limitWarning">
             ⚠️ Можно выбрать максимум 5 тем
         </div>
+        
+        <!-- Сообщение об ошибке загрузки -->
+        <div class="error-message" id="errorMessage"></div>
         
         <!-- Строка состояния -->
         <div class="status-bar">
@@ -233,7 +247,7 @@
                 updateCounts();
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
-                alert('Ошибка загрузки данных. Пожалуйста, обновите страницу.');
+                showError('Не удалось загрузить данные. Проверьте подключение к интернету или откройте страницу через веб-сервер.');
             }
         }
         
@@ -328,6 +342,18 @@
             setTimeout(() => {
                 warning.style.display = 'none';
             }, 3000);
+        }
+        
+        // Показать сообщение об ошибке
+        function showError(message) {
+            const errorBlock = document.getElementById('errorMessage');
+            errorBlock.textContent = message;
+            errorBlock.style.display = 'block';
+            
+            // Скрываем остальной интерфейс
+            document.getElementById('topicsList').style.display = 'none';
+            document.getElementById('showSongsBtn').disabled = true;
+            document.getElementById('resetBtn').disabled = true;
         }
         
         // Скрыть предупреждение

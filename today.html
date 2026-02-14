@@ -17,25 +17,29 @@
         }
         
         .date-display h2 {
-            margin: 0 0 10px 0;
+            margin: 0;
             color: #2c3e50;
             font-size: 1.5rem;
         }
         
         .date-nav {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-top: 15px;
         }
         
         .date-link {
             color: #3498db;
             text-decoration: none;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 4px;
             background: #f0f8ff;
-            font-size: 0.9rem;
+            font-size: 1rem;
             transition: background-color 0.2s;
         }
         
@@ -75,13 +79,10 @@
             </a>
         </div>
         
-        <!-- Дата и навигация -->
+        <!-- Дата -->
         <div class="date-display">
             <h2 id="current-date">Песни на сегодня</h2>
             <div class="songs-count" id="songs-count"></div>
-            <div class="date-nav">
-                <a href="yesterday.html" class="date-link">← Вчера</a>
-            </div>
         </div>
         
         <!-- Список песен -->
@@ -92,6 +93,11 @@
         <!-- Сообщение об ошибке -->
         <div id="error-message" class="error-message" style="display: none;">
             <p>Не удалось загрузить список песен. Пожалуйста, попробуйте позже.</p>
+        </div>
+        
+        <!-- Навигация по дням (под списком) -->
+        <div class="date-nav">
+            <a href="yesterday.html" class="date-link">← Вчера</a>
         </div>
     </div>
 
