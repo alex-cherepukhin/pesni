@@ -1,0 +1,483 @@
+{
+  "steps": [
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "A",
+    "B",
+    "H"
+  ],
+  "chords": {
+    "C": [
+      {
+        "name": "C",
+        "description": "мажорное трезвучие",
+        "image": "chords/images/C.png"
+      },
+      {
+        "name": "C6",
+        "description": "мажорное трезвучие с секстой",
+        "image": "chords/images/C6.png"
+      },
+      {
+        "name": "C7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/C7.png"
+      },
+      {
+        "name": "C9",
+        "description": "мажорный нонаккорд с малой септимой и большой ноной",
+        "image": "chords/images/C9.png"
+      },
+      {
+        "name": "Cm",
+        "description": "минорное трезвучие",
+        "image": "chords/images/Cm.png"
+      },
+      {
+        "name": "Cm6",
+        "description": "минорное трезвучие с секстой",
+        "image": "chords/images/Cm6.png"
+      },
+      {
+        "name": "Cm7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/Cm7.png"
+      },
+      {
+        "name": "Cm-5",
+        "description": "уменьшенное трезвучие",
+        "image": "chords/images/Cm-5.png"
+      },
+      {
+        "name": "Cmaj7",
+        "description": "мажорный септаккорд с большой септимой",
+        "image": "chords/images/Cmaj7.png"
+      }
+    ],
+    "C#": [
+      {
+        "name": "C#7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/C#7.png"
+      },
+      {
+        "name": "C#m",
+        "description": "минорное трезвучие",
+        "image": "chords/images/C#m.png"
+      },
+      {
+        "name": "C#m7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/C#m7.png"
+      },
+      {
+        "name": "C#dim",
+        "description": "уменьшенный септаккорд",
+        "image": "chords/images/C#dim.png"
+      },
+      {
+        "name": "C#m-5",
+        "description": "уменьшенное трезвучие",
+        "image": "chords/images/C#m-5.png"
+      }
+    ],
+    "D": [
+      {
+        "name": "D",
+        "description": "мажорное трезвучие",
+        "image": "chords/images/D.png"
+      },
+      {
+        "name": "D7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/D7.png"
+      },
+      {
+        "name": "Dm",
+        "description": "минорное трезвучие",
+        "image": "chords/images/Dm.png"
+      },
+      {
+        "name": "D+5",
+        "description": "увеличенное трезвучие",
+        "image": "chords/images/Dx5.png"
+      },
+      {
+        "name": "D-7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/D-7.png"
+      },
+      {
+        "name": "D-9",
+        "description": "мажорный септаккорд с малой септимой и малой ноной",
+        "image": "chords/images/D-9.png"
+      },
+      {
+        "name": "D76",
+        "description": "мажорный септаккорд с секстой",
+        "image": "chords/images/D76.png"
+      },
+      {
+        "name": "Dm6",
+        "description": "минорное трезвучие с секстой",
+        "image": "chords/images/Dm6.png"
+      },
+      {
+        "name": "Dm7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/Dm7.png"
+      },
+      {
+        "name": "Dsus",
+        "description": "мажорное трезвучие с квартой вместо нижней терции",
+        "image": "chords/images/Dsus.png"
+      },
+      {
+        "name": "Dmaj7",
+        "description": "мажорный септаккорд с большой септимой",
+        "image": "chords/images/Dmaj7.png"
+      }
+    ],
+    "D#": [
+      {
+        "name": "D#dim",
+        "description": "уменьшенный септаккорд",
+        "image": "chords/images/D#dim.png"
+      },
+      {
+        "name": "D#m-5",
+        "description": "уменьшенное трезвучие",
+        "image": "chords/images/D#m-5.png"
+      }
+    ],
+    "E": [
+      {
+        "name": "E",
+        "description": "мажорное трезвучие",
+        "image": "chords/images/E.png"
+      },
+      {
+        "name": "E7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/E7.png"
+      },
+      {
+        "name": "Em",
+        "description": "минорное трезвучие",
+        "image": "chords/images/Em.png"
+      },
+      {
+        "name": "E-9",
+        "description": "мажорный септаккорд с малой септимой и малой ноной",
+        "image": "chords/images/E-9.png"
+      },
+      {
+        "name": "Em6",
+        "description": "минорное трезвучие с секстой",
+        "image": "chords/images/Em6.png"
+      },
+      {
+        "name": "Em7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/Em7.png"
+      },
+      {
+        "name": "Edim",
+        "description": "уменьшенный септаккорд",
+        "image": "chords/images/Edim.png"
+      },
+      {
+        "name": "Esus",
+        "description": "мажорное трезвучие с квартой вместо нижней терции",
+        "image": "chords/images/Esus.png"
+      }
+    ],
+    "F": [
+      {
+        "name": "F",
+        "description": "мажорное трезвучие",
+        "image": "chords/images/F.png"
+      },
+      {
+        "name": "F6",
+        "description": "мажорное трезвучие с секстой",
+        "image": "chords/images/F6.png"
+      },
+      {
+        "name": "F7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/F7.png"
+      },
+      {
+        "name": "F9",
+        "description": "мажорный нонаккорд с малой септимой и большой ноной",
+        "image": "chords/images/F9.png"
+      },
+      {
+        "name": "Fm",
+        "description": "минорное трезвучие",
+        "image": "chords/images/Fm.png"
+      },
+      {
+        "name": "Fm6",
+        "description": "минорное трезвучие с секстой",
+        "image": "chords/images/Fm6.png"
+      },
+      {
+        "name": "Fm7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/Fm7.png"
+      },
+      {
+        "name": "Fdim",
+        "description": "уменьшенный септаккорд",
+        "image": "chords/images/Fdim.png"
+      }
+    ],
+    "F#": [
+      {
+        "name": "F#7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/F#7.png"
+      },
+      {
+        "name": "F#m",
+        "description": "минорное трезвучие",
+        "image": "chords/images/F#m.png"
+      },
+      {
+        "name": "F#-9",
+        "description": "мажорный септаккорд с малой септимой и малой ноной",
+        "image": "chords/images/F#-9.png"
+      },
+      {
+        "name": "F#m7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/F#m7.png"
+      },
+      {
+        "name": "F#dim",
+        "description": "уменьшенный септаккорд",
+        "image": "chords/images/F#dim.png"
+      },
+      {
+        "name": "F#m-5",
+        "description": "уменьшенное трезвучие",
+        "image": "chords/images/F#m-5.png"
+      },
+      {
+        "name": "F#sus",
+        "description": "мажорное трезвучие с квартой вместо нижней терции",
+        "image": "chords/images/F#sus.png"
+      }
+    ],
+    "G": [
+      {
+        "name": "G",
+        "description": "мажорное трезвучие",
+        "image": "chords/images/G.png"
+      },
+      {
+        "name": "G6",
+        "description": "мажорное трезвучие с секстой",
+        "image": "chords/images/G6.png"
+      },
+      {
+        "name": "G7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/G7.png"
+      },
+      {
+        "name": "G9",
+        "description": "мажорный нонаккорд с малой септимой и большой ноной",
+        "image": "chords/images/G9.png"
+      },
+      {
+        "name": "Gm",
+        "description": "минорное трезвучие",
+        "image": "chords/images/Gm.png"
+      },
+      {
+        "name": "Gm6",
+        "description": "минорное трезвучие с секстой",
+        "image": "chords/images/Gm6.png"
+      },
+      {
+        "name": "Gm7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/Gm7.png"
+      },
+      {
+        "name": "Gsus",
+        "description": "мажорное трезвучие с квартой вместо нижней терции",
+        "image": "chords/images/Gsus.png"
+      },
+      {
+        "name": "Gmaj7",
+        "description": "мажорный септаккорд с большой септимой",
+        "image": "chords/images/Gmaj7.png"
+      },
+      {
+        "name": "Gsus7",
+        "description": "мажорный септаккорд с малой септимой и квартой вместо нижней терции",
+        "image": "chords/images/Gsus7.png"
+      }
+    ],
+    "G#": [
+      {
+        "name": "G#m",
+        "description": "минорное трезвучие",
+        "image": "chords/images/G#m.png"
+      },
+      {
+        "name": "G#dim",
+        "description": "уменьшенный септаккорд",
+        "image": "chords/images/G#dim.png"
+      },
+      {
+        "name": "G#m-5",
+        "description": "уменьшенное трезвучие",
+        "image": "chords/images/G#m-5.png"
+      }
+    ],
+    "A": [
+      {
+        "name": "A",
+        "description": "мажорное трезвучие",
+        "image": "chords/images/A.png"
+      },
+      {
+        "name": "A6",
+        "description": "мажорное трезвучие с секстой",
+        "image": "chords/images/A6.png"
+      },
+      {
+        "name": "A7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/A7.png"
+      },
+      {
+        "name": "A9",
+        "description": "мажорный нонаккорд с малой септимой и большой ноной",
+        "image": "chords/images/A9.png"
+      },
+      {
+        "name": "Am",
+        "description": "минорное трезвучие",
+        "image": "chords/images/Am.png"
+      },
+      {
+        "name": "Am6",
+        "description": "минорное трезвучие с секстой",
+        "image": "chords/images/Am6.png"
+      },
+      {
+        "name": "Am7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/Am7.png"
+      },
+      {
+        "name": "Asus",
+        "description": "мажорное трезвучие с квартой вместо нижней терции",
+        "image": "chords/images/Asus.png"
+      },
+      {
+        "name": "Asus7",
+        "description": "мажорный септаккорд с малой септимой и квартой вместо нижней терции",
+        "image": "chords/images/Asus7.png"
+      }
+    ],
+    "B": [
+      {
+        "name": "A#dim",
+        "description": "уменьшенный септаккорд",
+        "image": "chords/images/A#dim.png"
+      },
+      {
+        "name": "B",
+        "description": "мажорное трезвучие",
+        "image": "chords/images/B.png"
+      },
+      {
+        "name": "B+5",
+        "description": "увеличенное трезвучие",
+        "image": "chords/images/Bx5.png"
+      },
+      {
+        "name": "B7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/B7.png"
+      },
+      {
+        "name": "B9",
+        "description": "мажорный нонаккорд с малой септимой и большой ноной",
+        "image": "chords/images/B9.png"
+      },
+      {
+        "name": "Bm",
+        "description": "минорное трезвучие",
+        "image": "chords/images/Bm.png"
+      },
+      {
+        "name": "Bm6",
+        "description": "минорное трезвучие с секстой",
+        "image": "chords/images/Bm6.png"
+      }
+    ],
+    "H": [
+      {
+        "name": "H",
+        "description": "мажорное трезвучие",
+        "image": "chords/images/H.png"
+      },
+      {
+        "name": "H7",
+        "description": "мажорный септаккорд с малой септимой",
+        "image": "chords/images/H7.png"
+      },
+      {
+        "name": "H9",
+        "description": "мажорный нонаккорд с малой септимой и большой ноной",
+        "image": "chords/images/H9.png"
+      },
+      {
+        "name": "Hm",
+        "description": "минорное трезвучие",
+        "image": "chords/images/Hm.png"
+      },
+      {
+        "name": "H+5",
+        "description": "увеличенное трезвучие",
+        "image": "chords/images/Hx5.png"
+      },
+      {
+        "name": "Hm6",
+        "description": "минорное трезвучие с секстой",
+        "image": "chords/images/Hm6.png"
+      },
+      {
+        "name": "Hm7",
+        "description": "минорный септаккорд с малой септимой",
+        "image": "chords/images/Hm7.png"
+      },
+      {
+        "name": "Hm-5",
+        "description": "уменьшенное трезвучие",
+        "image": "chords/images/Hm-5.png"
+      },
+      {
+        "name": "Hsus",
+        "description": "мажорное трезвучие с квартой вместо нижней терции",
+        "image": "chords/images/Hsus.png"
+      }
+    ]
+  },
+  "total": 88
+}
