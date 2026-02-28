@@ -107,11 +107,38 @@
             display: block;
         }
         
+        .chord-name-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
         .chord-name {
             font-size: 2rem;
             font-weight: 600;
             color: #2c3e50;
-            margin-bottom: 10px;
+        }
+
+        .play-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            opacity: 0.6;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .play-btn:hover {
+            opacity: 1;
+        }
+
+        .play-btn.playing {
+            opacity: 1;
+            transform: scale(1.2);
         }
         
         .chord-description {
@@ -199,7 +226,10 @@
         
         <!-- Отображение выбранного аккорда -->
         <div class="chord-display" id="chordDisplay">
-            <div class="chord-name" id="chordName"></div>
+            <div class="chord-name-row">
+                <div class="chord-name" id="chordName"></div>
+                <button class="play-btn" id="playBtn" title="Воспроизвести аккорд">🔊</button>
+            </div>
             <div class="chord-description" id="chordDescription"></div>
             <div class="chord-image-container">
                 <img class="chord-image" id="chordImage" alt="Аккорд">
@@ -330,6 +360,183 @@
             chordDisplay.classList.add('show');
         }
         
+
+        // ── Аудио (Salamander Grand Piano) ──────────────────────────
+        const SEMI = {C:0,'C#':1,'Db':1,D:2,'D#':3,'Eb':3,E:4,'E#':5,F:5,'F#':6,'Gb':6,G:7,'G#':8,'Ab':8,A:9,'A#':10,'Bb':10,B:11};
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const sampleBuffers = {};
+        const BASE_URL = 'https://gleitz.github.io/midi-js-soundfonts/MusyngKite/acoustic_grand_piano-mp3/';
+
+        // Ноты для каждого аккорда (H = B natural, B = Bb)
+        const CHORD_NOTES = {
+            'A':      ['A','C#','E'],
+            'A6':     ['A','C#','E','F#'],
+            'A7':     ['A','C#','E','G'],
+            'A9':     ['A','C#','E','G','B'],
+            'Am':     ['A','C','E'],
+            'Am6':    ['A','C','E','F#'],
+            'Am7':    ['A','C','E','G'],
+            'Asus':   ['A','D','E'],
+            'Asus7':  ['A','D','E','G'],
+            'A#dim':  ['A#','C#','E','G'],
+            'B':      ['Bb','D','F'],
+            'B+5':    ['Bb','D','F#'],
+            'B7':     ['Bb','D','F','A'],
+            'B9':     ['Bb','D','F','A','C'],
+            'Bm':     ['Bb','Db','F'],
+            'Bm6':    ['Bb','Db','F','G'],
+            'C':      ['C','E','G'],
+            'C6':     ['C','E','G','A'],
+            'C7':     ['C','E','G','Bb'],
+            'C9':     ['C','E','G','Bb','D'],
+            'Cm':     ['C','Eb','G'],
+            'Cm6':    ['C','Eb','G','A'],
+            'Cm7':    ['C','Eb','G','Bb'],
+            'Cm-5':   ['C','Eb','Gb'],
+            'Cmaj7':  ['C','E','G','B'],
+            'C#7':    ['C#','F','G#','B'],
+            'C#m':    ['C#','E','G#'],
+            'C#m7':   ['C#','E','G#','B'],
+            'C#dim':  ['C#','E','G','Bb'],
+            'C#m-5':  ['C#','E','G'],
+            'D':      ['D','F#','A'],
+            'D+5':    ['D','F#','A#'],
+            'D7':     ['D','F#','A','C'],
+            'D-7':    ['D','F#','Ab','C'],
+            'D-9':    ['D','F#','A','C','Eb'],
+            'D76':    ['D','F#','A','B','C'],
+            'Dm':     ['D','F','A'],
+            'Dm6':    ['D','F','A','B'],
+            'Dm7':    ['D','F','A','C'],
+            'Dsus':   ['D','G','A'],
+            'Dmaj7':  ['D','F#','A','C#'],
+            'D#dim':  ['D#','F#','A','C'],
+            'D#m-5':  ['D#','F#','A'],
+            'E':      ['E','G#','B'],
+            'E7':     ['E','G#','B','D'],
+            'E-9':    ['E','G#','B','D','F'],
+            'Em':     ['E','G','B'],
+            'Em6':    ['E','G','B','C#'],
+            'Em7':    ['E','G','B','D'],
+            'Edim':   ['E','G','Bb','Db'],
+            'Esus':   ['E','A','B'],
+            'F':      ['F','A','C'],
+            'F6':     ['F','A','C','D'],
+            'F7':     ['F','A','C','Eb'],
+            'F9':     ['F','A','C','Eb','G'],
+            'Fm':     ['F','Ab','C'],
+            'Fm6':    ['F','Ab','C','D'],
+            'Fm7':    ['F','Ab','C','Eb'],
+            'Fdim':   ['F','Ab','B','D'],
+            'F#7':    ['F#','A#','C#','E'],
+            'F#-9':   ['F#','A#','C#','E','G'],
+            'F#m':    ['F#','A','C#'],
+            'F#m7':   ['F#','A','C#','E'],
+            'F#dim':  ['F#','A','C','Eb'],
+            'F#m-5':  ['F#','A','C'],
+            'F#sus':  ['F#','B','C#'],
+            'G':      ['G','B','D'],
+            'G6':     ['G','B','D','E'],
+            'G7':     ['G','B','D','F'],
+            'G9':     ['G','B','D','F','A'],
+            'Gm':     ['G','Bb','D'],
+            'Gm6':    ['G','Bb','D','E'],
+            'Gm7':    ['G','Bb','D','F'],
+            'Gsus':   ['G','C','D'],
+            'Gsus7':  ['G','C','D','F'],
+            'Gmaj7':  ['G','B','D','F#'],
+            'G#m':    ['G#','B','D#'],
+            'G#dim':  ['G#','B','D','F'],
+            'G#m-5':  ['G#','B','D'],
+            'H':      ['B','D#','F#'],
+            'H+5':    ['B','D#','G'],
+            'H7':     ['B','D#','F#','A'],
+            'H9':     ['B','D#','F#','A','C#'],
+            'Hm':     ['B','D','F#'],
+            'Hm6':    ['B','D','F#','G#'],
+            'Hm7':    ['B','D','F#','A'],
+            'Hm-5':   ['B','D','F'],
+            'Hsus':   ['B','E','F#'],
+        };
+
+        function noteToMidi(name, oct) {
+            let acc = name.length > 1 ? name.slice(1) : '';
+            const s = SEMI[name[0] + acc] ?? SEMI[name[0]] ?? 0;
+            return (oct + 1) * 12 + s;
+        }
+
+        function midiToGleitz(midi) {
+            const names = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+            return names[midi % 12] + (Math.floor(midi / 12) - 1);
+        }
+
+        function assignOctaves(notes) {
+            const result = [];
+            let prev = -1, oct = 3;
+            for (let i = 0; i < notes.length; i++) {
+                let midi = noteToMidi(notes[i], oct);
+                if (i > 0 && midi <= prev) { oct++; midi = noteToMidi(notes[i], oct); }
+                result.push(midi);
+                prev = midi;
+            }
+            return result;
+        }
+
+        async function ensureSample(midi) {
+            if (sampleBuffers[midi]) return;
+            const url = BASE_URL + midiToGleitz(midi) + '.mp3';
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(res.status);
+                const arr = await res.arrayBuffer();
+                sampleBuffers[midi] = await audioCtx.decodeAudioData(arr);
+            } catch(e) {
+                console.warn('Не удалось загрузить сэмпл:', midiToGleitz(midi));
+            }
+        }
+
+        function playMidi(midi, when, dur) {
+            const buf = sampleBuffers[midi];
+            if (!buf) return;
+            const src = audioCtx.createBufferSource();
+            src.buffer = buf;
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.8, when);
+            gain.gain.exponentialRampToValueAtTime(0.001, when + dur + 2);
+            src.connect(gain);
+            gain.connect(audioCtx.destination);
+            src.start(when);
+            src.stop(when + dur + 2.5);
+        }
+
+        let playBtn = null;
+        document.addEventListener('DOMContentLoaded', () => {
+            playBtn = document.getElementById('playBtn');
+            playBtn.addEventListener('click', () => playCurrentChord());
+        });
+
+        async function playCurrentChord() {
+            if (!currentChord) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const notes = CHORD_NOTES[currentChord.name];
+            if (!notes) { console.warn('Ноты не найдены для:', currentChord.name); return; }
+
+            const midis = assignOctaves(notes);
+            await Promise.all(midis.map(m => ensureSample(m)));
+
+            const dur = 3.0;
+            const arpDelay = 0.07;
+            const now = audioCtx.currentTime + 0.05;
+
+            playBtn.classList.add('playing');
+            midis.forEach((midi, i) => playMidi(midi, now + i * arpDelay, dur));
+
+            const total = (dur + midis.length * arpDelay) * 1000 + 500;
+            setTimeout(() => playBtn.classList.remove('playing'), total);
+        }
+        // ── Конец аудио ─────────────────────────────────────────────
+
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', loadChordsData);
     </script>
