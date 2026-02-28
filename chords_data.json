@@ -65,27 +65,27 @@
       {
         "name": "C#7",
         "description": "мажорный септаккорд с малой септимой",
-        "image": "chords/images/C#7.png"
+        "image": "chords/images/Cis7.png"
       },
       {
         "name": "C#m",
         "description": "минорное трезвучие",
-        "image": "chords/images/C#m.png"
+        "image": "chords/images/Cism.png"
       },
       {
         "name": "C#m7",
         "description": "минорный септаккорд с малой септимой",
-        "image": "chords/images/C#m7.png"
+        "image": "chords/images/Cism7.png"
       },
       {
         "name": "C#dim",
         "description": "уменьшенный септаккорд",
-        "image": "chords/images/C#dim.png"
+        "image": "chords/images/Cisdim.png"
       },
       {
         "name": "C#m-5",
         "description": "уменьшенное трезвучие",
-        "image": "chords/images/C#m-5.png"
+        "image": "chords/images/Cism-5.png"
       }
     ],
     "D": [
@@ -149,12 +149,12 @@
       {
         "name": "D#dim",
         "description": "уменьшенный септаккорд",
-        "image": "chords/images/D#dim.png"
+        "image": "chords/images/Disdim.png"
       },
       {
         "name": "D#m-5",
         "description": "уменьшенное трезвучие",
-        "image": "chords/images/D#m-5.png"
+        "image": "chords/images/Dism-5.png"
       }
     ],
     "E": [
@@ -245,37 +245,37 @@
       {
         "name": "F#7",
         "description": "мажорный септаккорд с малой септимой",
-        "image": "chords/images/F#7.png"
+        "image": "chords/images/Fis7.png"
       },
       {
         "name": "F#m",
         "description": "минорное трезвучие",
-        "image": "chords/images/F#m.png"
+        "image": "chords/images/Fism.png"
       },
       {
         "name": "F#-9",
         "description": "мажорный септаккорд с малой септимой и малой ноной",
-        "image": "chords/images/F#-9.png"
+        "image": "chords/images/Fis-9.png"
       },
       {
         "name": "F#m7",
         "description": "минорный септаккорд с малой септимой",
-        "image": "chords/images/F#m7.png"
+        "image": "chords/images/Fism7.png"
       },
       {
         "name": "F#dim",
         "description": "уменьшенный септаккорд",
-        "image": "chords/images/F#dim.png"
+        "image": "chords/images/Fisdim.png"
       },
       {
         "name": "F#m-5",
         "description": "уменьшенное трезвучие",
-        "image": "chords/images/F#m-5.png"
+        "image": "chords/images/Fism-5.png"
       },
       {
         "name": "F#sus",
         "description": "мажорное трезвучие с квартой вместо нижней терции",
-        "image": "chords/images/F#sus.png"
+        "image": "chords/images/Fissus.png"
       }
     ],
     "G": [
@@ -334,17 +334,17 @@
       {
         "name": "G#m",
         "description": "минорное трезвучие",
-        "image": "chords/images/G#m.png"
+        "image": "chords/images/Gism.png"
       },
       {
         "name": "G#dim",
         "description": "уменьшенный септаккорд",
-        "image": "chords/images/G#dim.png"
+        "image": "chords/images/Gisdim.png"
       },
       {
         "name": "G#m-5",
         "description": "уменьшенное трезвучие",
-        "image": "chords/images/G#m-5.png"
+        "image": "chords/images/Gism-5.png"
       }
     ],
     "A": [
@@ -398,7 +398,7 @@
       {
         "name": "A#dim",
         "description": "уменьшенный септаккорд",
-        "image": "chords/images/A#dim.png"
+        "image": "chords/images/Aisdim.png"
       },
       {
         "name": "B",
